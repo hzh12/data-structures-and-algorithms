@@ -1,0 +1,76 @@
+#include<bits/stdc++.h> 
+using namespace std;
+
+const double eps = 1e-7;
+const int N = 1005, M = 10005;
+double a[N][M+N],sum;
+int n,m;
+
+void pivot(int o,int e)//e为行o为列
+{
+	a[e][0] /= a[e][o];
+	for (int i = 1; i <= n; ++i)
+		if (i != o)a[e][i] *= (1 / a[e][o]);
+	a[e][o] = 1;
+
+	for (int i = 1; i <= m; ++i)
+	{
+		if (i != e && fabs(a[i][o]) > eps)
+		{
+			a[i][0] += a[e][0] * a[i][o];
+			for (int j = 1; j <= n; ++j)
+				if (j != o)a[i][j] += a[e][j] * a[i][o];
+			a[i][o] = 0;
+		}
+	}
+
+	sum += a[0][o] * a[e][0];
+	for (int i = 1; i <= n; ++i)
+		if (i != o)a[0][o] -= a[0][e] * a[e][i];
+	a[0][o] = 0;
+}
+
+void solve()
+{
+	int e, o; double d;
+	while (1)
+	{
+		d = DBL_MAX;
+		for (int i = 1; i <= m; ++i)
+			if (a[i][0] < d)
+				d = a[i][0], e = i;
+
+		if (d == DBL_MAX)return;
+
+		d = DBL_MIN;
+		for (int i = 1; i <= n; ++i)
+		{
+			if (a[e][i] < 0 && d < a[0][i] / a[e][i])
+				d = a[0][i] / a[e][i], o = i;
+		}
+		if (d == DBL_MIN) { sum = -1; return; }
+
+		pivot(o, e);
+	}
+}
+
+int main()
+{
+	scanf("%d%d", &n, &m);
+	for (int i = 1; i <= n; ++i)
+		scanf("%d", &a[0][i]);
+
+	for (int i = 1; i <= m; ++i)
+	{
+		int l, r, val;
+		scanf("%d%d%d", &l, &r, &val);
+		a[i][0] = -val;
+		for (int j = l; j <= r; ++j)
+			a[i][j] = -1;
+		a[i][n + i] = 1;
+	}
+
+	solve();
+	printf("%.0lf\n",sum);
+	return 0;
+}

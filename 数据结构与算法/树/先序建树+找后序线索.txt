@@ -1,0 +1,73 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+struct node {
+	node*left; node*right; char data;
+	node() { left = NULL; right = NULL;  }
+};
+class tree {
+private:
+	node* root;
+	string s;
+	void PreOrderTraverse(node *&p);
+	void PostOrderTraverse(node *p);
+public:
+	void preorder();
+	void postorder();
+	void search();
+};
+
+void tree::preorder()
+{
+	PreOrderTraverse(root);
+}
+void tree::PreOrderTraverse(node*& p)
+{
+	char ch; cin >> ch;
+	if (ch != '0')
+	{
+		p = new node;
+		p->data = ch;
+		PreOrderTraverse(p->left);
+		PreOrderTraverse(p->right);
+	}
+	else p = NULL;
+}
+void tree::postorder() {
+	PostOrderTraverse(root);
+}
+void tree::PostOrderTraverse(node*p) {
+	if (p)
+	{
+		PostOrderTraverse(p->left);
+		PostOrderTraverse(p->right);
+		s += p->data;
+	}
+}
+void tree::search() {
+	int i; char ch;
+	cin >> ch;
+	int len = (int)s.length();
+	for (i = 0; i < len; i++)
+		if (s[i] == ch)break;
+
+	if (i == len)cout << "ERROR" << endl;
+	else if (!i&&i == len - 1)cout << "-1 -1" << endl;
+	else if (!i && i != len - 1)cout << "-1 " << s[i + 1] << endl;
+	else if (i && i == len - 1)cout << s[i - 1] << " -1" << endl;
+	else cout << s[i - 1] << ' ' << s[i + 1] << endl;
+}
+
+int main()
+{
+	int t; cin >> t;
+	while (t--)
+	{
+		tree myt;
+		myt.preorder();
+		myt.postorder();
+		myt.search();
+		myt.search();
+	}
+	return 0;
+}

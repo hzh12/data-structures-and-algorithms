@@ -1,0 +1,93 @@
+#include<iostream>
+#include<cstdio>
+#include<cstring>
+#include<cmath>
+
+using namespace std;
+
+const int lmax=256;
+const int header=11;
+const int N=7;
+
+int m;
+
+int length(int i)
+{
+    int k=0;
+    while(i>0)
+    {
+        k++;
+        i/=2;
+    }
+    return k;
+}
+
+//s 像素序列最优分段所需的存储数位。
+//p 灰度值。
+//l 一块中有l[i]个像素点。
+//b 一个像素点有多少位。
+
+void compress(int n,int p[],int s[],int l[],int b[])
+{
+    s[0]=0;
+    for(int i=1;i<=n;i++)
+    {
+        b[i]=length(p[i]);
+        int bmax=b[i];
+        s[i]=s[i-1]+b[i];
+        l[i]=1;
+        //j代表从i开始往前数j个分成一块,从i开始往前数1，2，……分成一块，并求出其最小值。
+        for(int j=2;j<=i&&j<=lmax;j++)
+        {
+            if(bmax<b[i-j+1])
+                bmax=b[i-j+1];
+            if(s[i]>s[i-j]+j*bmax)
+            {
+                s[i]=s[i-j]+j*bmax;
+                l[i]=j;
+            }
+        }
+        s[i]+=header;
+    }
+}
+
+void Traceback(int n,int s[],int l[])
+{
+    if(n==0)
+        return ;
+    Traceback(n-l[n],s,l);    //最后一段有l[n]个像素，依次向前类推。
+    s[m++]=n-l[n];          //重新为数组s赋值，存储分段位置，最终m为共分了多少段。
+}
+
+void output(int s[],int l[],int b[],int n)
+{
+    //输出s[n]存储位数后，s[]被重新赋值，用来存储分段位置。
+    cout<<"图像压缩后的最小空间为："<<s[n]<<endl;
+    m=0;
+    Traceback(n,s,l);
+    s[m]=n;         //m为总段数，设s[m]=n,分割位置为第n个像素。
+    cout<<"将原灰度序列分为"<<m<<"段序列"<<endl;
+    for(int i=1;i<=m;i++)
+    {
+        l[i]=l[s[i]];
+        b[i]=b[s[i]];       //42,43行决定这b该取多大。
+    }
+    for(int i=1;i<=m;i++)
+    {
+        cout<<"段长度："<<l[i]<<"，所需存储位数："<<b[i]<<endl;
+    }
+}
+
+int main()
+{
+    int p[]={0,10,12,15,255,1,2};
+    int s[N],l[N],b[N];
+    cout<<"图像序列灰度值为："<<endl;
+    for(int i=1;i<N;i++)
+        printf("%d ",p[i]);
+    cout<<endl;
+    compress(N-1,p,s,l,b);
+    output(s,l,b,N-1);
+    return 0;
+}
+

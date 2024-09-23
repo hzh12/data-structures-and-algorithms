@@ -1,0 +1,62 @@
+#include <iostream>
+#include<stack>
+
+using namespace std;
+
+string str = "0123456789ABCDEF";
+
+int main()
+{
+	int n, r;
+	while (cin >> n >> r)
+	{
+		if (n == 0) { cout << "0" << endl; continue; }
+		if (n < 0) { cout << "-"; n = -n; }
+
+		stack<int> sta;
+		while (n) 
+		{
+			sta.push(n%r);
+			n /= r;
+		}
+		while (!sta.empty())
+		{
+			cout << str[sta.top()];
+			sta.pop();
+		}
+		cout << endl;
+	}
+	return 0;
+}
+
+int main(){
+	int t; cin >> t;
+	while (t--){
+		int k;double n;
+		queue<int> que;stack<int> sta;
+		cin >> n >> k;
+		int t = (int)n;
+		n -= t;
+		while (t){
+			sta.push(t % k);
+			t /= k;
+		}
+		while (!sta.empty()){
+			cout << str[sta.top()];
+			sta.pop();
+		}
+		cout << ".";
+
+		for (int i = 0; i < 3; i++){
+			n *= k;
+			que.push((int)n);
+			n -= (int)n;
+		}
+		while (!que.empty()){
+			cout << str[que.front()];
+			que.pop();
+		}
+		cout << endl;
+	}
+	return 0;
+}

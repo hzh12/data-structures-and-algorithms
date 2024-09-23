@@ -1,0 +1,170 @@
+#include<bits/stdc++.h> //最长回文子串
+using namespace std;
+
+string baoli(string str)   //时间复杂度=n^3
+{
+	int len = str.length();
+	int maxlen = 0,pos=0;
+
+	for (int i = 0; i < len; i++)
+	{
+		for (int j = i + 1; j < len; j++)
+		{
+			int index1, index2;
+			for ( index1 = i, index2 = j; index1 < index2; index1++, index2--)
+				if (str[index1] != str[index2])break;
+			if (index1 >= index2 && j - i+1 > maxlen)
+				maxlen = j - i + 1, pos = i;
+		}
+	}
+	if (maxlen > 0)return str.substr(pos, pos + maxlen);
+	return "erro";
+}
+
+string dp(string str)  //时间复杂度=n^2
+{
+	int len = str.length();
+	int maxlen=0, pos=0;
+
+	vector<vector<bool> >dp(len, vector<bool>(len));
+	for (int i = 0; i < len; i++)
+	{ 
+		dp[i][i] = true;
+		if (i < len - 1 && str[i] == str[i + 1])
+		{
+			dp[i][i + 1] = true;
+			pos = i; maxlen = 2;
+		}
+	}
+
+	for (int strlen = 3; strlen <= len; ++strlen)
+	{
+		for (int i = 0; i+strlen-1<len; i++)
+		{
+			int j = i + strlen - 1;
+			if (dp[i + 1][j - 1] && str[i]==str[j])
+			{
+				dp[i][j] = true;
+				maxlen = strlen; pos = i;
+			}
+		}
+	}
+
+	if (maxlen > 0)return str.substr(pos, pos + maxlen);
+	return"erro";
+}
+
+int main()
+{
+	string str = "122";
+	cout << baoli(str);              //暴力
+	//cout << dp(str);         //递归
+
+	return 0;
+}
+
+
+public static String findLongestPalindrome2(String s) {  //中心扩展，时间复杂度=n^2
+	int len = s.length();
+	int maxlength = 0;
+	int start = 0;
+	// 类似于aba这种情况，以i为中心向两边扩展
+	for (int i = 0; i < len; i++) {
+		int j = i - 1;
+		int k = i + 1;
+		while (j >= 0 && k < len && s.charAt(j) == s.charAt(k)) {
+			if (k - j + 1 > maxlength) {
+				maxlength = k - j + 1;
+				start = j;
+			}
+			j--;
+			k++;
+		}
+	}
+	// 类似于abba这种情况，以i，i+1为中心向两边扩展
+	for (int i = 0; i < len; i++) {
+		int j = i;
+		int k = i + 1;
+		while (j >= 0 && k < len && s.charAt(j) == s.charAt(k)) {
+			if (k - j + 1 > maxlength) {
+				maxlength = k - j + 1;
+				start = j;
+			}
+			j--;
+			k++;
+		}
+	}
+	if (maxlength > 0)
+		return s.substring(start, start + maxlength);
+	return null;
+}
+
+update｛//简洁版
+int n = s.size(), ans = 0;
+        for (int i = 0; i < 2 * n - 1; ++i) {
+            int l = i / 2, r = i / 2 + i % 2;
+            while (l >= 0 && r < n && s[l] == s[r]) {
+                --l;
+                ++r;
+                ++ans;
+            }
+        }
+        return ans;
+｝
+
+
+public static String findLongestPalindrome3(String s) {  //Manacher算法,时间复杂度=n
+	if (s == null || s.length() < 1)
+		return "";
+	String str = dealWithS(s);  // 处理一下s,即将给字符串s的中间加上特殊字符，这样无论对于奇数字符还是偶数字符可以做同样的处理
+	int[] res = new int[str.length()];
+	int R = 0; // 当前所能扩展的半径
+	int C = 0; // C位置的半径为R
+	int maxC = 0; // 最长的半径的位置
+	res[0] = 0;
+	for (int i = 1; i < str.length(); i++)
+	{
+		int j = 2 * C - i;  // i点的对称点
+		if (j >= 0 && res[j] < R - i)  // 对称点存在且对称点的回文半径在C的回文中
+		{
+			res[i] = res[j];
+		}
+		else  // 否则，需要根据i点一点一点的计算
+		{
+			int k = 1;
+			while (R + k < str.length() && 2 * i - R - k >= 0)
+			{
+				if (str.charAt(R + k) == str.charAt(2 * i - R - k))
+					k++;
+				else
+					break;
+			}
+			res[i] = R - i + k - 1;
+			if (res[i] + i > R)
+			{
+				R = res[i] + i;
+				C = i;
+			}
+		}
+		maxC = res[maxC] > res[i] ? maxC : i;  // maxC保存的是回文半径最大的那个点的位置
+	}
+	String subStr = str.substring(maxC - res[maxC], maxC + res[maxC] + 1);
+	StringBuffer sb = new StringBuffer();
+	for (int i = 0; i < subStr.length(); i++)
+	{
+		if (subStr.charAt(i) != '#')
+			sb.append(subStr.charAt(i));
+	}
+	return sb.toString();
+}
+public static String dealWithS(String s)  // 将原字符串进行处理
+{
+	StringBuffer sb = new StringBuffer();
+	sb.append("#");
+	for (int i = 0; i < s.length(); i++)
+	{
+		sb.append(s.charAt(i));
+		sb.append("#");
+	}
+	return sb.toString();
+}

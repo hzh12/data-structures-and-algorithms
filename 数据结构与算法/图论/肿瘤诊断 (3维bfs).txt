@@ -1,0 +1,52 @@
+#include <bits/stdc++.h>
+using namespace std;
+int dx[6][3]={{1,0,0},{-1,0,0},{0,1,0},{0,-1,0},{0,0,1},{0,0,-1}};
+int n,m,l,t;
+int a[61][130][1300];
+int area=0;
+struct p{
+    int x,y,z;
+}k,o;
+int check(int x,int y,int z)
+{
+    if(x<0||y<0||z<0||x>=l||y>=n||z>=m) return 0;
+    return 1;
+}
+void bfs(int x,int y,int z)
+{
+    queue <p> q;
+    int sum=1;
+    k.x=x; k.y=y; k.z=z;
+    a[k.x][k.y][k.z]=0;
+    q.push(k);
+    while(!q.empty()){
+        k=q.front(); q.pop();
+        for(int i=0;i<6;i++){
+            o.x=k.x+dx[i][0];
+            o.y=k.y+dx[i][1];
+            o.z=k.z+dx[i][2];
+            if(check(o.x,o.y,o.z)&&a[o.x][o.y][o.z]){
+                a[o.x][o.y][o.z]=0;
+                sum++;
+                q.push(o);
+            }
+        }
+    }
+    if(sum>=t) area+=sum;
+}
+int main()
+{
+    scanf("%d%d%d%d",&n,&m,&l,&t);
+    for(int k=0;k<l;k++)
+        for(int i=0;i<n;i++)
+            for(int j=0;j<m;j++)
+            scanf("%d",&a[k][i][j]);
+ 
+    for(int k=0;k<l;k++)
+        for(int i=0;i<n;i++)
+            for(int j=0;j<m;j++)
+                if(a[k][i][j]) bfs(k,i,j);
+ 
+    printf("%d",area);
+    return 0;
+}

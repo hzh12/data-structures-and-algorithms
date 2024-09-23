@@ -1,0 +1,89 @@
+#include<bits/stdc++.h> //最长上升子序列
+using namespace std;
+
+class Solution {
+public:
+	static int dp(vector<int>& nums) { //dp解法，时间复杂度=n^2
+		int n = nums.size();
+		int *f = new int[n];
+		int per[100][100] ;
+		for (int i = 0; i < n; i++)f[i] = 1;
+		for (int i = 0; i < n; i++)
+			for (int j = 0; j < i; j++)
+				if (nums[j] < nums[i])
+					f[i] = max(f[i], f[j] + 1);
+
+		int res=-1;
+		for (int i = 0; i < n; i++)
+			res = max(res, f[i]);
+	/*	int t = res;
+		for (int i = n - 1; i >= 0; i--)
+		{
+			if (f[i] == t)cout << nums[i] << " ", --t;
+			if (!t)break;
+		}*/
+		return res;
+	}
+	static int tanxin(vector<int>& nums) { //贪心+二分，时间复杂度=nlogn
+		  int len=nums.size(),res=1;
+        vector<int> low(len,0x3f3f3f3f);
+       //vector<int> low(len,0x3f3f3f3f);
+        low[0]=nums[0];
+
+       for(int i=1;i<len;i++)
+       if(nums[i]>low[res-1])
+       low[res++]=nums[i];
+       else
+       low[lower_bound(low.begin(),low.end(),nums[i])-low.begin()]=nums[i];//第一个大于等于
+      // low[lower_bound(low.begin(),low.begin()+res,nums[i])-low.begin()]=nums[i];        
+return res;
+	}
+};
+
+int main()
+{
+	int a[] = { 1, 4, 7, 2, 5, 9, 10, 3 };
+	vector<int> t(a,a+8);
+	cout<<Solution::dp(t);
+	cout<<Solution::tanxin(t);
+}
+
+const int maxn = 103, INF = 0x7f7f7f7f;      //数状数组，时间复杂度=nlogn
+struct Node {
+	int val, num;
+}z[maxn];
+int T[maxn];
+int n;
+bool cmp(Node a, Node b)
+{
+	return a.val == b.val ? a.num < b.num : a.val < b.val;
+}
+void modify(int x, int y)//把val[x]替换为val[x]和y中较大的数 
+{
+	for (; x <= n; x += x & (-x)) T[x] = max(T[x], y);
+}
+int query(int x)//返回val[1]~val[x]中的最大值 
+{
+	int res = -INF;
+	for (; x; x -= x & (-x)) res = max(res, T[x]);
+	return res;
+}
+int main()
+{
+	int ans = 0;
+	scanf("%d", &n);
+	for (int i = 1; i <= n; i++)
+	{
+		scanf("%d", &z[i].val);
+		z[i].num = i;//记住val[i]的编号，有点类似于离散化的处理，但没有去重 
+	}
+	sort(z + 1, z + n + 1, cmp);//以权值为第一关键字从小到大排序 
+	for (int i = 1; i <= n; i++)//按权值从小到大枚举 
+	{
+		int maxx = query(z[i].num);//查询编号小于等于num[i]的LIS最大长度
+		modify(z[i].num, ++maxx);//把长度+1，再去更新前面的LIS长度
+		ans = max(ans, maxx);//更新答案
+	}
+	printf("%d\n", ans);
+	return 0;
+}

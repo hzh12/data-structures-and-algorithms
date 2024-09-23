@@ -1,0 +1,160 @@
+#include <iostream>
+#include<string>
+#include<string.h>
+#include<algorithm>
+using namespace std;
+
+#define N 0x3f3f3f3f
+
+int n, e;
+int m[100][100], d[100], pos[100];
+string str[100];
+bool vis[100];
+int ans = 0;
+
+#define N 0x3f3f3f3f
+
+int n, e;
+int m[100][100], d[100], pos[100];
+string str[100];
+int vis[100];
+int ans = 0;
+
+class Kru {//存储kruskal算法中的节点
+public:
+	int bef;
+	int aft;
+	int data;
+	Kru() {
+		bef = -1;
+		aft = -1;
+		data = 0;
+	}
+}kr[100];
+
+int find(string str[], string ch)
+{
+	for (int i = 0; i < n; i++)
+		if (str[i] == ch)return i;
+	return -1;
+}
+void change(int a, int b) {//将两个顶点及与他们相通的顶点改成同样的值表示 
+											  //他们相通
+	for (int i = 0; i < n; i++)
+		if (vis[i] == a)
+			vis[i] = b;
+
+}
+
+void kruskal(Kru kr[]) {//kruskal算法
+	for (int i = 0; i < n; i++)
+		vis[i] = i;
+
+	cout << "kruskal:" << endl;
+	int e_number = 0;
+	for (int i = 0; i < e; i++)
+	{
+		if (vis[kr[i].bef] != vis[kr[i].aft] )
+		{
+			e_number++;
+
+			int t1 = kr[i].bef;
+			int t2 = kr[i].aft;
+			
+
+			if (t1 > t2) {
+				int t = t1;
+				t1 = t2;
+				t2 = t;
+			}
+			change(vis[t1], vis[t2]);
+			cout << str[t1] << " " << str[t2] << " " << kr[i].data << endl;
+			if (e_number == n - 1)break;
+		}
+	}
+}
+
+
+bool compare(Kru a, Kru b)
+{
+	return a.data < b.data ? true : false;
+}
+
+void prime(int start)
+{
+	memset(vis, 0, sizeof vis);
+	vis[start] = 1;
+
+	for (int i = 0; i < n; i++)
+	{
+		d[i] = m[start][i];
+		pos[i] = start * 100 + i;
+	}
+
+	string bef[100], aft[100];
+	int val[100];
+
+	int minn, k, r = 0;
+	for (int i = 0; i < n - 1; i++)
+	{
+		minn = N;
+		for (int j = 0; j < n; j++)
+			if (vis[j] == 0 && minn > d[j])
+				minn = d[j], k = j;
+
+		vis[k] = 1;
+		bef[r] = str[pos[k] / 100];
+		aft[r] = str[k];
+		val[r++] = d[k];
+		ans += minn;
+
+		for (int j = 0; j < n; j++)
+		{
+			if (vis[j] == 0 && d[j] > m[k][j])
+				d[j] = m[k][j], pos[j] = k * 100 + j;
+		}
+	}
+	cout << ans << endl << "prim:" << endl;
+
+	for (int i = 0; i < r; i++)
+		cout << bef[i] << ' ' << aft[i] << " " << val[i] << endl;
+}
+
+
+
+int main()
+{
+	cin >> n;
+	for (int i = 0; i < n; i++)
+		cin >> str[i];
+
+	memset(m, 0x3f, sizeof m);
+
+	cin >> e;
+	for (int i = 0; i < e; i++)
+	{
+		string p1, p2;
+		int val;
+		cin >> p1 >> p2 >> val;
+
+		int pos1 = find(str, p1);
+		int pos2 = find(str, p2);
+
+		m[pos1][pos2] = m[pos2][pos1] = val;
+
+		kr[i].bef = pos1;
+		kr[i].aft = pos2;
+		kr[i].data = val;
+
+	}
+
+	string start_p; cin >> start_p;
+
+	int start = find(str, start_p);
+	prime(start);
+
+	sort(kr, kr + e, compare);
+	kruskal(kr);
+
+	return 0;
+}

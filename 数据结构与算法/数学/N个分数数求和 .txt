@@ -1,0 +1,51 @@
+#include<iostream>
+#include<cmath>
+
+using namespace std;
+
+long gcd(long a,long b)
+{//求两数的最大公约数 
+  return a%b==0 ? b:gcd(b,a%b);
+}
+
+int main()
+{	
+	int N;
+    cin>>N;
+    int a[100]={0};//分子 
+    int b[100]={0};//分母 
+    long s1=0;//s1记录所有分母通分后分子之和 
+    long s2=0;//s2记录当前最小公倍数 
+    for(int i=0;i<N;i++)
+	{
+   		scanf("%d/%d",&a[i],&b[i]);
+ 	 }
+    s2=b[0];//将s2当做初始最小公倍数 
+    
+    for(int i=1;i<N;i++)
+    {//求出最终最小公倍数s2
+    	s2=s2*b[i]/gcd(s2,b[i]);
+    }
+    for(int i=0;i<N;i++)
+    {//求出通分后所有分子之和s1 
+    	s1+=s2/b[i]*a[i];
+	}
+    long long n=s1/s2,m=abs(s1%s2);//n存储整数m存储余数 
+    if(m==0)
+    {//如果结果是整数
+   	cout<<n<<endl;
+	} 
+    else
+    {
+    	if(n!=0)
+    	{//n==0时不输出n
+      	cout<<n<<" ";  		
+		}
+    	if(s1<0)
+	  	{//如果是负数
+	    	cout<<"-";
+		}//将(分子/分母)化到最简
+		cout<<m/gcd(s2,m)<<"/"<<s2/gcd(s2,m);	  
+    }
+    return 0;
+}

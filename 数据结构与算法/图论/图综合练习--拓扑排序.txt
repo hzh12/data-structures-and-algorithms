@@ -1,0 +1,62 @@
+#include <iostream>
+using namespace std;
+ 
+void test(int n)
+{
+    int **m;
+    m = new int*[n];
+    int *visit;
+    visit = new int[n];
+    for (int i = 0; i < n; i++)
+    {
+        visit[i] = 0;
+        m[i] = new int[n];
+        for (int j = 0; j < n; j++)
+            cin >> m[i][j];
+    }
+    int flag, num = n;
+    while (num--)
+    {
+        for (int i = 0; i < n; i++)
+        {
+            if (visit[i] == 1)
+                continue;
+            flag = 0;
+            for (int j = 0; j < n; j++)
+            {
+                if (m[j][i] != 0)
+                {
+                    flag = 1;
+                    break;
+                }
+            }
+            if (flag == 0)
+            {
+                visit[i] = 1;
+                cout << i << ' ';
+                for (int j = 0; j < n; j++)
+                    m[i][j] = 0;
+                break;
+            }
+        }
+    }
+    cout << endl;
+    for (int i = 0; i < n; i++)
+    {
+        delete[]m[i];
+    }
+    delete[]m;
+    delete[]visit;
+}
+int main()
+{
+    int t;
+    cin >> t;
+    int n;
+    while (t--)
+    {
+        cin >> n;
+        test(n);
+    }
+    return 0;
+}

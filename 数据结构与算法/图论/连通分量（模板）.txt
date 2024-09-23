@@ -1,0 +1,111 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+class Graph{
+    int vexNum;
+    int arcNum;
+    string *vex;
+    int **array;
+    bool *visit;
+    int count;
+    void DFS(int v);
+    int Index(string str);
+public:
+    Graph();
+    ~Graph();
+    void getConnect();
+    void outPut();
+};
+
+Graph::Graph():count(0) {
+    cin>>vexNum;
+    vex = new string[vexNum];
+    for(int i=0;i<vexNum;i++)
+        cin>>vex[i];
+
+    array = new int*[vexNum];
+    visit = new bool[vexNum];
+    for(int i=0;i<vexNum;i++)
+    {
+        visit[i] = false;
+        array[i] = new int[vexNum];
+        for(int j=0;j<vexNum;j++)
+            array[i][j] = 0;
+    }
+
+    cin>>arcNum;
+    for(int i=0;i<arcNum;i++)
+    {
+        string str1,str2;
+        cin>>str1>>str2;
+        int num1=Index(str1),num2=Index(str2);
+        array[num1][num2] = 1;
+        array[num2][num1] = 1;
+    }
+}
+
+Graph::~Graph() {
+    delete []visit;
+    delete []vex;
+    for(int i=0;i<vexNum;i++)
+        delete []array[i];
+    delete []array;
+}
+
+void Graph::DFS(int v) {
+    if(!visit[v])
+    {
+        visit[v] = true;
+        for(int j=0;j<vexNum;j++)
+            if(array[v][j]==1)
+                DFS(j);
+    }
+}
+
+void Graph::getConnect() {
+    for(int i=0;i<vexNum;i++)
+        if(!visit[i])
+        {
+            DFS(i);
+            count++;
+        }
+
+}
+
+int Graph::Index(string str) {
+    for(int i=0;i<vexNum;i++)
+        if(vex[i] == str)
+            return i;
+    return -1;
+}
+
+void Graph::outPut() {
+    for(int i=0;i<vexNum;i++)
+        if(i!=vexNum-1)
+            cout<<vex[i]<<' ';
+        else
+            cout<<vex[i]<<endl;
+
+    for(int i=0;i<vexNum;i++)
+        for(int j=0;j<vexNum;j++)
+            if(j!=vexNum-1)
+                cout<<array[i][j]<<' ';
+            else
+                cout<<array[i][j]<<endl;
+
+    cout<<count<<endl<<endl;
+}
+
+int main()
+{
+    int t;
+    cin>>t;
+    while (t--)
+    {
+        Graph myGraph;
+        myGraph.getConnect();
+        myGraph.outPut();
+    }
+    return 0;
+}

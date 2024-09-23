@@ -1,0 +1,71 @@
+有 N 种物品和一个容量是 V 的背包。
+第 i 种物品最多有 si 件，每件体积是 vi，价值是 wi。
+求解将哪些物品装入背包，可使物品体积总和不超过背包容量，且价值总和最大。 输出最大价值。
+
+最基本的思路为，最优解中可以包含 0,1,2,…,s 第 i 个物品
+状态转移矩阵为：f[ i ][ v ] = max{ f[ i-1 ][ v ] , f[ i-1 ][ v- k * c[ i ] ]+k*w[ i ] }
+
+暴力解法
+上述思路的方法是将第 i 个物品拆分为1,2, …,s,对应的质量与价值也乘以相应的倍数，每个不同倍数的物品 i 就是一个全新的物品，然后就转换为了01背包问题。继续按照该思路，是否有更加高效的拆分方法？
+空间复杂度为：O(V*∑s[i])
+
+二进制思想
+参考二进制数的表示方法，将每件物品的数量都可以用1,2,4,8，… 的2^k组合来表示。
+空间复杂度：O(V*∑log n[i])
+
+暴力
+class Solution {
+public:
+	int f[1001];
+	int solve(int n, int v, int V[], int W[],int s[])
+	{
+		for (int i = 0; i < n; i++)	
+			for (int j = v; j >= V[i]; j--)
+				for (int k = 1; k*v <= j && k <= s[i]; k++)
+					f[j] = max(f[j], f[j - k * V[i]] + W[i] * k);
+		return f[v];
+	}
+};
+
+二进制
+int f[2001];
+
+struct use
+{
+    int v;
+    int w;
+};
+
+int main()
+{
+    int N,V;
+    cin>>N>>V;
+    
+    vector<use> goods;
+   
+    for(int i=0;i<N;i++)
+    {
+        int v,w,s;
+        cin>>v>>w>>s;
+        
+        //二进制法对商品数量拆分
+        for(int k=1;k<=s;k*=2)
+        {
+            s=s-k;
+            goods.push_back({k*v,k*w});
+        }
+        //s-∑2^k
+        goods.push_back({s*v,s*w});
+    }
+    
+    //转换为01背包问题
+    for(auto good:goods)
+    {
+        for(int j=V;j>=good.v;j--)
+            f[j]=max(f[j],f[j-good.v]+good.w);
+    }
+    
+    cout<<f[V]<<endl;
+    
+    return 0;
+}

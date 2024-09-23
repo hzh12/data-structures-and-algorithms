@@ -1,0 +1,137 @@
+#include <iostream>
+#include<string>
+using namespace std;
+
+const int maxn = 9999;
+
+class HuffNode
+{
+public:
+	int weight, parent, leftchild, rightchild;
+};
+
+class HuffMan
+{
+private:
+	void makeTree();
+	void selectMin(int pos, int* s1, int* s2);
+public:
+	int len, lnum;  //结点、叶子	
+	HuffNode* hufftree;
+	string* huffcode;
+	void makeTree(int n, int wt[]);
+	void coding();
+	void destory();
+};
+
+void HuffMan::makeTree(int n, int wt[])
+{
+	lnum = n;
+	len = 2 * n - 1;
+	hufftree = new HuffNode[2 * n];
+	huffcode = new string[lnum + 1];
+
+	for (int i = 1; i <= n; i++)
+	{
+		hufftree[i].weight = wt[i - 1];
+		hufftree[i].parent = 0;
+		hufftree[i].leftchild = 0;
+		hufftree[i].rightchild = 0;
+	}
+	for (int i = 1; i <= len; i++)
+	{
+		if (i > n) {
+			hufftree[i].weight = 0;
+			hufftree[i].parent = 0;
+			hufftree[i].leftchild = 0;
+			hufftree[i].rightchild = 0;
+		}
+	}
+	makeTree();
+}
+
+void HuffMan::selectMin(int pos, int* s1, int* s2)
+{
+	int w1, w2;
+	w1 = w2 = maxn;
+
+	for (int i=1; i <= pos; i++)
+	{
+		if (w1 > hufftree[i].weight && !hufftree[i].parent)
+		{
+			w2 = w1;
+			*s2 = *s1;
+
+			w1 = hufftree[i].weight;
+			*s1 = i;
+		}
+		else if (w2 > hufftree[i].weight && !hufftree[i].parent)
+		{
+			w2 = hufftree[i].weight;
+			*s2 = i;
+		}
+	}
+}
+
+
+void HuffMan::makeTree()
+{
+	int i, s1, s2;
+	for (i = lnum + 1; i <= len; i++)
+	{
+		selectMin(i - 1, &s1, &s2);
+		hufftree[s1].parent = hufftree[s2].parent = i;
+		hufftree[i].leftchild = s1;
+		hufftree[i].rightchild = s2;
+		hufftree[i].weight = hufftree[s1].weight + hufftree[s2].weight;
+	}
+}
+
+void HuffMan::coding()
+{
+	char* cd;
+	int  c, f, start;
+	cd = new char[lnum];
+	cd[lnum - 1] = '\0';
+		for (int i = 1; i <= lnum; i++)
+		{
+			start = lnum - 1;
+			for (c = i, f = hufftree[i].parent; f != 0; c = f, f = hufftree[f].parent)
+				if (hufftree[f].leftchild == c)
+					cd[--start] = '0';
+				else
+					cd[--start] = '1';
+			huffcode[i].assign(&cd[start]);
+		}
+		delete[]cd;
+}
+
+void HuffMan::destory()
+{
+	len = 0; lnum = 0;
+	delete[]huffcode;
+	delete[]hufftree;
+}
+
+int main()
+{
+	int t; cin >> t;
+	int wt[800];
+	HuffMan myhuff;
+	while (t--)
+	{
+		int n, num; cin >> n;
+		for (int i = 0; i < n; i++)
+			cin >> wt[i];
+
+		myhuff.makeTree(n, wt);
+		myhuff.coding();
+		for (int j = 1; j <= n; j++)
+		{
+			cout << myhuff.hufftree[j].weight << "-";
+			cout << myhuff.huffcode[j] << endl;
+		}
+		myhuff.destory();
+	}
+	return 0;
+}

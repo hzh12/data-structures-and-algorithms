@@ -1,0 +1,13 @@
+int **p;
+p = new int*[x]; //行 //申请行的空间
+//每行的列申请空间
+for(i=0; i<x;i++)
+{
+p[i] = new int [y];
+}
+
+for(i=0;i<x;i++)
+{
+delete [] p[i];
+}
+delete [] p;

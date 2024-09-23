@@ -1,0 +1,39 @@
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+
+using namespace std;
+
+const int N = 5001;
+
+char s[N];
+int f[N][N];
+char ret[N << 1];
+
+int main(void) {
+    scanf("%s", s);
+    int len = strlen(s);
+    for (int i = 0; i < len - 1; ++i)
+        f[i][i + 1] = (s[i] != s[i + 1]);
+    for (int i = len - 2; i >= 0; --i) {
+        for (int j = i + 2; j < len; ++j) {
+            if (s[i] == s[j]) f[i][j] = f[i + 1][j - 1];
+            else f[i][j] = min(f[i + 1][j], f[i][j - 1]) + 1;
+        }
+    }
+    int i = 0, j = len - 1;
+    int tot_len = len + f[0][len - 1];
+    int l = 0, r = tot_len - 1;
+    while (i <= j) {
+        if (s[i] == s[j]) {
+            ret[l++] = s[i++];
+            ret[r--] = s[j--];
+        } else if (f[i + 1][j] < f[i][j - 1]) {
+            ret[l++] = ret[r--] = s[i++];
+        } else {
+            ret[l++] = ret[r--] = s[j--];
+        }
+    }
+    puts(ret);
+    return 0;
+}

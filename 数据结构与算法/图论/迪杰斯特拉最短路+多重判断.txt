@@ -1,0 +1,90 @@
+#include<iostream>
+#include<string>
+#include<string.h>
+using namespace std;
+
+#define N 500
+#define Max 0x3f3f3f3f
+
+int n, m, st, ed;
+int g[N][N], weight[N];
+int num[N], w[N], d[N], pre[N];
+bool vis[N];
+
+void print(int d)
+{
+	if (d == st) { printf("%d", d); return; }
+	print(pre[d]);
+	printf(" %d", d);
+}
+
+void dj()
+{
+	memset(vis, false, sizeof(vis));
+	memset(w, 0, sizeof(w));
+	memset(d, 0x3f, sizeof(d));
+
+	d[st] = 0, w[st] = weight[st], num[st] = 1;
+
+	for (int i = 0; i < n; i++)
+	{
+		int u = -1, min = Max;
+		for (int j = 0; j < n; j++)
+		{
+			if (!vis[j] && d[j] < min)
+				u = j, min = d[j];
+		}
+
+		if (u == -1)return;
+		vis[u] = true;
+		
+
+		for (int v = 0; v < n; v++)
+		{
+			if (!vis[v] && g[u][v] != Max)
+			{
+				if (d[v] > d[u] + g[u][v])
+				{
+					d[v] = d[u] + g[u][v];
+					w[v] = w[u] + weight[v];
+					num[v] = num[u];
+					pre[v] = u;
+				}
+				else if (d[v] == d[u] + g[u][v] )
+				{
+					if (w[v] < w[u] + weight[v])
+					{
+						w[v] = w[u] + weight[v];
+						pre[v] = u;
+						
+					}
+					num[v] += num[u];
+				}				
+			}
+		}
+
+	}
+}
+
+int main()
+{
+	scanf("%d%d%d%d", &n, &m, &st, &ed);
+
+	for (int i = 0; i < n; i++)
+		scanf("%d", &weight[i]);
+
+	memset(g, 0x3f, sizeof(g));
+	int u, v, val;
+	for (int i = 0; i < m; i++)
+	{
+		scanf("%d%d%d", &u, &v,&val);
+		g[u][v] = g[v][u] = val;
+	}
+
+	dj();
+
+	printf("%d %d\n", num[ed], w[ed]);
+	print(ed);
+
+	return 0;
+}

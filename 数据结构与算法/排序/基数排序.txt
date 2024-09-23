@@ -1,0 +1,67 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+#define MIN 0x80000000
+#define N 100
+int a[N], n;
+
+void print(queue<int> b[])
+{
+	int k = 0;
+	for (int i = 0; i < 10; i++)
+	{
+		cout << i << ":";
+		if (b[i].empty())
+			cout << "NULL" << endl;
+		else
+		{
+			cout << "->";
+			while (!b[i].empty())
+			{
+				cout << b[i].front() << "->";
+				a[k++] = b[i].front();
+				b[i].pop();
+			}
+			cout << "^\n";
+		}
+	}
+
+	for (int i = 0; i < k; i++)
+			cout << a[i] << " ";
+	cout << endl;
+}
+
+int main()
+{
+	int t; cin >> t;
+	while (t--)
+	{
+		cin >> n;
+
+		int max = MIN;
+		for (int i = 0; i < n; i++)
+		{
+			cin >> a[i];
+			if (max < a[i])max = a[i];
+		}
+	
+		int keysize = 0;
+		while (max)keysize++, max /= 10;
+
+		queue<int> B[N];
+		int count = 0, div = 1;
+		while (count < keysize)
+		{
+			for (int i = 0; i < n; i++)
+			{
+				int s = (a[i] / div) % 10;
+				B[s].push(a[i]);
+			}
+			print(B);
+			count++;
+			div *= 10;
+		}
+		cout << endl;
+	}
+	return 0;
+}

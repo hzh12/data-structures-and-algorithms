@@ -1,0 +1,85 @@
+#include <iostream>
+#include<stack>
+#include<string.h>
+using namespace std;
+
+int main()
+{
+	int t; cin >> t;
+	while (t--)
+	{
+		int n; cin >> n;
+		int* p = new int[2 * n + 3];
+		//int *p=new int[2*n+3]();
+		memset(p, 0, sizeof(p)*(2*n+3));
+		
+		int flag = 0;
+		for (int i = 1; i <= n; i++)
+		{
+			cin >> p[i];
+			if (p[i])flag++;
+		}
+
+		int pos = 1, k = 0;
+		stack<int>sta;
+
+		cout << p[1] << " ";
+		while (k != flag - 1)
+		{
+			if (p[2 * pos] && p[2 * pos + 1]) {
+				sta.push(2 * pos + 1);
+
+				cout << p[2 * pos] << " ";
+				k++;
+				pos *= 2;
+			}
+			if (p[2 * pos] && !p[2 * pos + 1]) {
+				cout << p[2 * pos] << " ";
+				k++;
+				pos *= 2;
+			}
+			if (!p[2 * pos] && p[2 * pos + 1]) {
+				cout << p[2 * pos + 1] << " ";
+				k++;
+				pos = pos * 2 + 1;
+			}
+			if (!p[2 * pos] && !p[2 * pos + 1]) {
+				if (!sta.empty()) {
+					pos = sta.top();
+					cout << p[pos] << " ";
+					k++;
+					sta.pop();
+				}
+			}	
+		}
+		cout << endl;
+		delete[]p;
+	}
+	return 0;
+}
+
+//void preorder(int* p, int i, int n)
+//{
+//    if(i<n&&p[i]!=0)
+//    {
+//        cout << p[i] << " ";
+//        preorder(p, 2 * i + 1, n);
+//        preorder(p, 2 * i + 2, n);
+//    }
+//}
+//
+//int main()
+//{
+//    int t; cin >> t;
+//    while (t--)
+//    {
+//        int n; cin >> n;
+//        int* p = new int[n];
+//        for (int i = 0; i < n; i++)
+//            cin >> p[i];
+//        preorder(p, 0, n);
+//        cout << endl;
+//        delete[] p;
+//    }
+//    return 0;
+//}

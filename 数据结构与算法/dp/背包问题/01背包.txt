@@ -1,0 +1,56 @@
+有 N 件物品和一个容量是 V 的背包。每件物品只能使用一次。
+第 i 件物品的体积是 vi，价值是 wi 。
+求解将哪些物品装入背包，可使这些物品的总体积不超过背包容量，且总价值最大。 输出最大价值。
+
+符号表示：
+f[i][v]表示前i件物品恰放入一个容量为v的背包可以获得的最大价值
+状态转移矩阵为：f[ i ][ v ] = max{ f[ i-1 ][ v ] , f[ i-1 ][ v-c[ i ] ]+w[ i ] }//不拿和拿
+
+时间复杂度：O(NV)
+空间复杂度：O(NV)
+
+class Solution {
+public:
+	int f[1001][1001];
+	int solve(int n, int v, int V[], int W[])
+	{
+		for (int i = 1; i <= n; i++)
+		{
+			for (int j = 0; j <= v; j++)
+			{
+				if (j < V[i])
+					f[i][j] = f[i - 1][j];
+				else
+					f[i][j] = max(f[i - 1][j], f[i - 1][j - V[i]] + W[i]);
+			}
+		}
+
+		int res = 0;
+		for (int j = 0; j <= v; j++)
+			res = max(res, f[n][j]);
+		return res;
+	}
+};
+
+时间复杂度：O(NV)
+空间复杂度：O(V)
+
+新的转态转移矩阵：f[ v ] = max( f[ v ] , f[ v-c[ i ] ] + w[ i ] )
+在代码的实现中采用<倒序遍历>可以实现此过程，由于更新f[ v ] 使用的是更小的f[v-…]
+
+class Solution {
+public:
+	int f[1001];
+	int solve(int n, int v, int V[], int W[])
+	{
+		for (int i = 1; i <= n; i++)
+		{
+			for (int j = v; j >= V[i]; j--)
+				f[j] = max(f[j], f[j - V[i]] + W[i]);
+		}
+
+		return f[v];
+	}
+};
+
+

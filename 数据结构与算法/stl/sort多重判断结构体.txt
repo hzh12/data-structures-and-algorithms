@@ -1,0 +1,53 @@
+#include<iostream>
+using namespace std;
+#include<algorithm>//包含了sort函数; 
+struct node
+{
+	int id;//人的编号;
+	int num;//人抢到红包的个数;
+	int value;//抢到红包的金额;	
+}person[10000];
+bool f(struct node a,struct node b)
+{
+	if(a.value!=b.value)//如果金额没有并列,则按照总金额从达到小的顺序递减输出; 
+	{
+		return a.value>b.value;
+	}
+	else if(a.num != b.num)//金额有并列，则按照抢到红包的个数递减输出;
+	{
+		return a.num>b.num;	
+	} 
+	else if(a.id != b.id)//如果金额和抢到红包的个数都有并列,则按照人的编号递增输出;
+	{
+		return a.id<b.id;	
+	} 
+}
+int main()
+{
+	int n,k,p,i,j,sum=0,n1;//k指的是抢到红包的个数,n指的是抢红包人的编号,p指的是抢到红包的金额;
+	cin>>n;
+	for(i=1;i<=n;i++)
+	{
+		person[i].id = i;//编号是i的人对应的id值是i; 
+		cin>>k;
+		sum=0;
+		for(j=1;j<=k;j++)
+		{
+			cin>>n1>>p;
+//			person[n1].id = n1;易错点，因为你不知道每个人都抢了红包,当有的人没有抢，那么对应的id值就变成了0; 
+			person[n1].value = person[n1].value + p;//记录抢到红包的金额; 
+			person[n1].num ++;//记录抢到红包的个数; 
+			sum = sum + p;//记录第i个人发红包的总金额; 
+		}
+		person[i].value = person[i].value - sum;//更新编号为i的人剩余的总金额;
+	} 
+	//因为人的编号n是正整数,故需要将person加1;
+	//person+n+1包含的范围是person+n，不包括那个1;
+	//[person+1,person+n+1)---->[1,n]
+	sort(person+1,person+n+1,f);//自动调用f()函数,包含在头文件 ----> #include<algorithm>
+	for(i=1;i<=n;i++)
+	{
+		//抢到红包的进金额是按照分这个单位来计算的,故需要在输出是转换成元; 
+		printf("%d %.2lf\n",person[i].id,person[i].value*1.0/100);
+	}
+}

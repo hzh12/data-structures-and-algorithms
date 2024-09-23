@@ -1,0 +1,120 @@
+#include<algorithm>
+#include<iostream>
+#include<cstdio>
+#include<cstring>
+#include<vector>
+#include<queue>
+#include<stack>
+using namespace std;
+const int MAXN = 25100;
+const int INF=0x7FFFFFFF;
+struct edge
+{
+    int to,weight;
+};
+int T,R,P,S;
+vector<edge>adjmap[MAXN];//邻接表
+bool in_queue[MAXN];//顶点是否在队列中
+int in_sum[MAXN];//顶点入队的次数
+int dist[MAXN];//源点到各点的最短路
+int path[MAXN];//存储到达i的前一个顶点
+int nodesum;  //顶点数
+int edgesum;  //边数
+bool spfa(int source)
+{
+    deque< int > dq;
+    int i,j,x,to;
+    for(int i = 1;i<=T;i++)//初始化函数
+    {
+         in_sum[i]= 0;
+         in_queue[i]=false;
+         dist[i]=INF;
+         path[i]=-1;
+    }
+    dq.push_back(source);
+    in_sum[source]++;
+    dist[source]=0;        //到达本身的最短距离为0
+    in_queue[source]= true;
+    while(!dq.empty())
+    {
+        x = dq.front();
+        dq.pop_front();
+        in_queue[x]=false;
+        for(int i = 0;i<adjmap[x].size();i++)
+        {
+            to = adjmap[x][i].to;
+            if((dist[x]<INF) && ( dist[to]>dist[x]+adjmap[x][i].weight) )
+            {
+                dist[to] = dist[x]+adjmap[x][i].weight;
+                path[to] = x;
+                if(!in_queue[to])
+                {
+                    in_queue[to] = true;
+                    in_sum[to]++;
+                    if(in_sum[to] == nodesum) return false;
+                    if(!dq.empty())
+                    {
+                       if(dist[to]>dist[dq.front()])  dq.push_back(to);
+                       else dq.push_front(to);
+                    } else dq.push_back(to);
+             }
+         }
+      }
+    }
+    return true;
+}
+void print_path(int x)
+{
+    //输出最小的花费
+    if(dist[x] == INF)//到不了的路径
+        cout<<"NO PATH"<<endl;
+    else cout<<dist[x]<<endl;
+
+//   下面是输出路径
+//    stack<int>s;
+//    int w = x;
+//    while(path[w]!=-1)
+//    {
+//        s.push(w);
+//        w=path[w];
+//    }
+//    //以下是经过的路径
+//    while(!s.empty())
+//    {
+//        cout<<s.top()<<" ";
+//        s.pop();
+//    }
+//    cout<<endl;
+}
+int main()
+{
+
+    edge temp;
+    int s,e,w;
+    scanf("%d %d %d %d",&T,&R,&P,&S);
+    for(int i = 1;i<T;i++)
+        adjmap[i].clear();//清空邻接表
+    for(int i = 1; i<=R; i++)
+    {
+        scanf("%d %d %d",&s,&e,&w);
+        temp.to = e;
+        temp.weight = w;
+        adjmap[s].push_back(temp);
+        temp.to = s;
+        adjmap[e].push_back(temp);//  公路的是双向的，需要放入两次
+    }
+    for(int i = 1;i<=P;i++)
+    {
+        scanf("%d %d %d",&s,&e,&w);
+        temp.to = e;
+        temp.weight = w;
+        adjmap[s].push_back(temp);
+    }
+    if(spfa(S))
+    {
+        for(int i =1;i<=T; i++ )
+             print_path(i);
+    }
+   // else cout<<"图中存在负权回路"<<endl;
+    return 0;
+}

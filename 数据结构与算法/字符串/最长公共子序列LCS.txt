@@ -1,0 +1,46 @@
+#include<bits/stdc++.h> //最长公共子序列LCS
+using namespace std;
+
+class Solution {
+public:
+	static int dp(vector<int>& nums1, vector<int>& nums2) { //dp解法，时间复杂度=n*m
+		int n1 = nums1.size(), n2 = nums2.size();
+		vector<vector<int> >dp(n1+1, vector<int>(n2+1));
+
+		for (int i = 1; i <= n1; i++)
+		{
+			for (int j = 1; j <= n2; j++)
+			{
+				if (nums1[i - 1] == nums2[j - 1])dp[i][j] = dp[i - 1][j - 1] + 1;
+				else dp[i][j] = max(dp[i][j - 1], dp[i - 1][j]);
+			}
+		}
+		return dp[n1][n2];
+	}
+	static vector<char> CommonSubsequence(vector<int>& nums1, vector<int>& nums2) { //求具体的串
+		int n1 = nums1.size(), n2 = nums2.size();
+		vector<char  >c(max(n1, n2));
+
+
+		while (n1 != 0 && n2 != 0)
+		{
+			if (nums1[n1 - 1] == nums2[n2 - 1])
+				c[--len] = nums1[--n1], --n2;
+			else if (dp[n1 - 1][n2] < dp[n1][n2 - 1])
+				--n2;
+			else
+				--n1;
+		}
+		return c;
+	}
+};
+
+int main()
+{
+	int a[] = { 1, 4, 7, 2, 5, 9, 10, 3 };
+	int b[] = { 1, 4, 7, 2, 5, 9, 10, 3 };
+	vector<int> t1(a, a + 8);
+	vector<int> t2(b, b + 8);
+	cout << Solution::dp(t1, t2);
+
+}

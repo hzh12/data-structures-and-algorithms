@@ -1,0 +1,49 @@
+int date(student& p)                    //日期差
+{	int sum = 0, t = 0;
+	for (int i = year; i != p.year; i++)
+	{if (isleapyear(year) == 1)
+			sum = sum + 366;
+		else sum = sum + 365;}
+	if (month < p.month)
+		for (int i = month; month != p.month; i++)
+		{sum += Day(p.year, i);}
+	else
+		for (int i = p.month; p.month != month; i++)
+		{	sum -= Day(p.year, i);}
+	sum = sum + p.day - day;
+	return sum;
+}
+
+#include<bits/stdc++.h>
+using namespace std;
+
+int days[2][13] = { {31,31,28,31,30,31,30,31,31,30,31,30,31},
+					{31,31,29,31,30,31,30,31,31,30,31,30,31} };
+
+bool isleap(int y)
+{
+	return(y % 4 == 0 && y % 100 != 0 || y % 400 == 0) ? 1 : 0;
+}
+
+int getabsdays(int y, int m, int d)
+{
+	y--;
+	int day = 365 * y + y / 4 - y / 100 + y / 400;
+	int k = isleap(y+1);
+	for (int i = 1; i < m ; i++)day += days[k][i];
+	day += d;
+	return day;
+}
+
+int main()
+{
+	while (1)
+	{
+		int y1, m1, d1; cin >> y1 >> m1 >> d1;
+		int y2, m2, d2; cin >> y2 >> m2 >> d2;
+		int n = abs(getabsdays(y1, m1, d1) - getabsdays(y2, m2, d2));
+		cout << n << endl;
+		cout << (getabsdays(y1, m1, d1)-1) % 7<<endl;//（1.1.1星期天）（0-6）
+	}
+	return 0;
+}

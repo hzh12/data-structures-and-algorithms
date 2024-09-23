@@ -1,0 +1,122 @@
+/*
+
+  函数：void BuildBadCharacterShift(char *, int, int*)
+目的：根据好后缀规则做预处理，建立一张好后缀表
+参数：  
+pattern => 模式串P	
+plen => 模式串P长度	  
+shift => 存放坏字符规则表,长度为的int数组		
+返回：void			  
+*/
+void BuildBadCharacterShift(char const* pattern, int plen, int* shift)
+{
+	for( int i = 0; i < 256; i++ )	
+		*(shift+i) = plen;
+	while ( plen >0 )		
+	{	
+		*(shift+(unsigned char)*pattern++) = --plen;		
+	}	
+}
+/*
+  函数：void BuildGoodSuffixShift(char *, int, int*) 
+目的：根据最好后缀规则做预处理，建立一张好后缀表	
+参数：
+pattern => 模式串P
+plen => 模式串P长度
+shift => 存放最好后缀表数组
+返回：void
+*/
+void  BuildGoodSuffixShift(char const* pattern, int plen, int* shift)
+{	
+	shift[plen-1] = 1;            // 右移动一位	
+	char end_val = pattern[plen-1];
+	char const* p_prev, const* p_next, const* p_temp;
+	char const* p_now = pattern + plen - 2;            // 当前配匹不相符字符,求其对应的shift
+	bool isgoodsuffixfind = false;                    // 指示是否找到了最好后缀子串,修正shift值
+	for( int i = plen -2; i >=0; --i, --p_now)		
+	{	
+		p_temp = pattern + plen -1;	
+		isgoodsuffixfind = false;
+		while ( true )		
+		{		
+			while (p_temp >= pattern && *p_temp-- != end_val);          // 从p_temp从右往左寻找和end_val相同的字符子串	
+			p_prev = p_temp;       // 指向与end_val相同的字符的前一个	
+			p_next = pattern + plen -2;             // 指向end_val的前一个
+			// 开始向前匹配有以下三种情况	
+			//第一：p_prev已经指向pattern的前方,即没有找到可以满足条件的最好后缀子串
+			//第二：向前匹配最好后缀子串的时候,p_next开始的子串先到达目的地p_now, 
+			//需要判断p_next与p_prev是否相等,如果相等,则继续住前找最好后缀子串	
+			//第三：向前匹配最好后缀子串的时候,p_prev开始的子串先到达端点pattern, 这个可以算是最好的子串
+				  
+			if( p_prev < pattern  && *(p_temp+1) != end_val )         // 没有找到与end_val相同字符	
+				break;
+
+			bool  match_flag = true;        //连续匹配失败标志	
+			while( p_prev >= pattern && p_next > p_now )		
+			{
+				if( *p_prev --!= *p_next-- )		
+				{	
+					match_flag = false;      //匹配失败	
+					break;	
+				}
+			}
+		
+			if( !match_flag )
+				continue;          //继续向前寻找最好后缀子串
+			else	
+			{	
+				//匹配没有问题, 是边界问题
+				if( p_prev < pattern || *p_prev != *p_next)	
+				{
+					// 找到最好后缀子串
+					isgoodsuffixfind = true;
+					break;	
+				}
+				// *p_prev == * p_next  则继续向前找	
+			}	
+		}
+		shift[i] = plen - i + p_next - p_prev;
+		if( isgoodsuffixfind )
+			shift[i]--;               // 如果找到最好后缀码，则对齐，需减修正
+	}
+}
+/*
+函数：int* BMSearch(char *, int , char *, int, int *, int *)
+目的：判断文本串T中是否包含模式串P
+参数：
+src => 文本串T
+slen => 文本串T长度
+ptrn => 模式串P
+pLen => 模式串P长度
+bad_shift => 坏字符表
+good_shift => 最好后缀表
+返回：
+int - 1表示匹配失败，否则反回					  
+*/
+int BMSearch(char const*src, int slen, char const*ptrn, int plen, int const*bad_shift, int const*good_shift)
+{
+	int s_idx = plen;  
+	if (plen == 0)	
+		return 1;
+	
+	while (s_idx <= slen)//计算字符串是否匹配到了尽头	
+	{	
+		int p_idx = plen, bad_stride, good_stride;	
+		while (src[--s_idx] == ptrn[--p_idx])//开始匹配		
+		{		
+			//if (s_idx < 0)	
+				//return -1;
+			
+			if (p_idx == 0)		
+			{     	
+				return s_idx;	
+			}	
+		}
+		
+		// 当匹配失败的时候，向前滑动
+		bad_stride = bad_shift[(unsigned char)src[s_idx]];      //根据坏字符规则计算跳跃的距离
+		good_stride = good_shift[p_idx];                                 //根据好后缀规则计算跳跃的距离
+		s_idx += ((good_stride > bad_stride) ? good_stride : bad_stride )+1;//取大者	
+	}
+	return -1;	
+}

@@ -1,0 +1,65 @@
+#include <iostream>
+using namespace std;
+
+const int maxlen = 20;
+
+class Map {
+private:
+	bool visit[maxlen];
+	int maxtrix[maxlen][maxlen];
+	int vexnum;
+
+	void DFS(int v) {
+		visit[v] = 1;
+		cout << v << ' ';
+		
+		int k = 0;
+		for (int i = 0; i < vexnum; i++)
+			if (!visit[i]){
+				k = 1; break;
+			}
+		if (!k)return;
+
+		for (int i = 0; i < vexnum; i++) 
+			if (maxtrix[v][i]&&!visit[i])
+				DFS(i);	
+	}
+public:
+	void setMatrix(int vnum, int mx[maxlen][maxlen]) {
+		vexnum = vnum;
+
+		for (int i = 0; i < vexnum; i++)
+			visit[i] = 0;
+
+		for (int i = 0; i < vexnum; i++)
+			for (int j = 0; j < vexnum; j++)
+				maxtrix[i][j] = mx[i][j];
+	}
+	void DFSvisit() {
+		for (int i = 0; i < vexnum; i++)
+		{if(!visit[i])
+			DFS(i);
+		}
+		cout << endl;
+	}
+
+};
+
+int main()
+{
+	int t; cin >> t;
+	while (t--)
+	{
+		int n; cin >> n;
+		int map[maxlen][maxlen];
+
+		for (int i = 0; i < n; i++)
+			for (int j = 0; j < n; j++)
+				cin >> map[i][j];
+
+		Map m;
+		m.setMatrix(n, map);
+		m.DFSvisit();
+	}
+	return 0;
+}

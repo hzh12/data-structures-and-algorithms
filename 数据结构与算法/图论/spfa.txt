@@ -1,0 +1,44 @@
+#include<bits/stdc++.h>  //spfa最短最长路
+using namespace std;
+const int N = 1e5 + 10;
+struct Node { int v; double w; };
+vector<Node> g[N];
+int n, m; double dis[N]; bool vis[N]; int pre[N];
+
+void spfa(int st) {
+	queue<int> q; q.push(st);
+	vis[st] = true;
+	while (q.size()) {
+		int t = q.front();
+		q.pop();
+		vis[t] = false;
+		for (int i = 0; i < g[t].size(); ++i) {
+			int j = g[t][i].v;
+			double w = g[t][i].w;
+			if (dis[j] < dis[t] + w) {
+				dis[j] = dis[t] + w;
+				pre[j] = t;
+				if (!vis[j]) {
+					q.push(j);
+					vis[j] = true;
+}}}}}
+
+void dfs(int u) {
+	if (u == 5) { cout << u << ' '; return; }
+	dfs(pre[u]);
+	cout << u << ' ';
+}
+int main() {
+	cin >> n >> m;
+	for (int i = 0; i < m; ++i) {
+		int a, b;double c;
+		cin >> a >> b >> c;
+		g[a].push_back({ b, c });
+}
+	spfa(5);
+	for (int i = 0; i < n; ++i) {
+		if (i == 5) continue;
+		dfs(i);cout << endl;
+}
+	return 0;
+}

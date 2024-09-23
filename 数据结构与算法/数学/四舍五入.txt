@@ -1,0 +1,2 @@
+float x ; int  y ; 
+y=(int)(x+0.5)>(int)x?(int)x+1:(int)x

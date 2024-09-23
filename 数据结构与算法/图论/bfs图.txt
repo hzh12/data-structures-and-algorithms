@@ -1,0 +1,66 @@
+#include <iostream>
+#include<queue>
+using namespace std;
+ 
+const int maxlen = 20;
+ 
+class BF {
+private:
+    int maxtrix[maxlen][maxlen];
+    int vexnum;
+    int* visit;
+    void BFS(int start) {
+        queue<int > que;
+        que.push(start);
+ 
+        while (!que.empty()) 
+        {
+            int st = que.front();
+            que.pop();
+            visit[st] = 1;
+            cout << st << ' ';
+ 
+            for (int i = 0; i < vexnum; i++) 
+                if (maxtrix[st][i] && !visit[i]) {
+                    visit[i] = 1;
+                    que.push(i);
+                }
+             
+        }
+    }
+public:
+    void setMx(int mx[maxlen][maxlen], int vnum) {
+        vexnum = vnum;
+        visit = new int[vnum];
+ 
+        for (int i = 0; i < vexnum; i++)
+            visit[i] = 0;
+ 
+        for (int i = 0; i < vexnum; i++)
+            for (int j = 0; j < vexnum; j++)
+                maxtrix[i][j] = mx[i][j];
+    }
+    void BFS() {
+        BFS(0);
+        cout << endl;
+    }
+};
+ 
+int main()
+{
+    int t; cin >> t;
+    while (t--)
+    {
+        int n; cin >> n;
+        int map[maxlen][maxlen];
+ 
+        for (int i = 0; i < n; i++)
+            for (int j = 0; j < n; j++)
+                cin >> map[i][j];
+ 
+        BF m;
+        m.setMx(map, n);
+        m.BFS();
+    }
+    return 0;
+}

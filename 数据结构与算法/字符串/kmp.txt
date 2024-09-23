@@ -1,0 +1,56 @@
+int KMP(char *s,char *p)
+{
+	int i=0;
+	int j=0;
+	int lens=strlen(s);
+	int lenp=strlen(p);
+	while(i<lens&&j<lenp)
+	{
+		//如果j=-1(表示第一次开始或者重新开始匹配)，即失配于首字符
+		if(j==-1||s[i]==p[j])
+		{
+			j++;
+			i++;
+		}
+		else
+		{
+			//如果j!+-1,或者当前匹配失败 ，则 
+			j=nextt[j]; // i不变，j=next[j] 
+		}
+	}
+	if(j==lenp)
+	return 1;//匹配成功 
+	else
+	return 0; 
+}
+
+void getnext(char *p)
+{
+	int lenp=strlen(p);
+	nextt[0]=-1;
+	int k=-1;
+	int j=0;
+	while(j<lenp-1)
+	{
+		//p[k]表示前缀，p[j]表示后缀（并没有“真”！）
+		if(k==-1||p[j]==p[k])//j在这
+		{
+			j++;//j+1在这
+			k++;//k=k+1
+			//---->若p[k]=p[j]，则next[j+1]=next[j]+1; 
+			//下一个位置的next 
+			if(p[j]!=p[k])//当p[k]！=p[j]时，与主串不匹配时可以返回到这
+			{
+				nextt[j]=k;
+			}
+			else//当p[j]=p[k]时与主串匹配时你在j位置不匹配匹配串返回这里当前
+		    	//还是 不能与主串匹配，然后还是要返回next[]即next[next[k]] 
+		    	nextt[j]=nextt[k];//优化了 
+		}
+		else
+		{
+			k=nextt[k];
+		}
+	}
+	return;
+}

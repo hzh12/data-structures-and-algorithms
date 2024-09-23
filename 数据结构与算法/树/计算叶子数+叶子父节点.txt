@@ -1,0 +1,176 @@
+#include <iostream>
+#include<stack>
+#include<queue>
+#include<string.h>
+#include<string>
+using namespace std;
+
+class Node {
+public:
+	char data;
+	Node* left, * right;
+	Node() :left(NULL), right(NULL) {}
+	~Node() { delete left; delete right; }
+};
+
+class tree {
+private:
+	Node* root;
+	int pos, count;
+	string strtree;
+	Node* createtree() {
+		Node* T;
+		char ch = strtree[pos++];
+
+		if (ch == '0')T = NULL;
+		else {
+			T = new Node();
+			T->data = ch;
+			T->left = createtree();
+			T->right = createtree();
+		}
+		return T;
+	}
+public:
+	int leaf;
+	queue<char> que;
+	void create(string TreeArray) {
+		pos = 0;
+		count = 0;
+		leaf = 0;
+		strtree.assign(TreeArray);
+		root = createtree();
+	}
+	void  getLeaf(Node* t, char chh) {
+		if (t) {
+			if (!t->left && !t->right) {
+				cout << t->data << ' ';
+				que.push(chh);
+				leaf++;
+			}
+			getLeaf(t->left, t->data); //传入父节点对应的值
+			getLeaf(t->right, t->data);
+		}
+	}
+
+	void getLeaf() {
+		getLeaf(root, root->data);
+	}
+
+	void countleaf() {
+		countleaf(root);
+		cout << count << endl;
+	}
+	void countleaf(Node* t) {
+		if (t)
+		{
+			if (!t->left && !t->right)
+				count++;
+			countleaf(t->left);
+			countleaf(t->right);
+		}
+	}
+};
+
+int main()
+{
+	int t; cin >> t;
+	while (t--)
+	{
+		string str; cin >> str;
+		tree _t;
+
+		_t.create(str);
+		_t.countleaf();
+	}
+	return 0;
+}
+
+//需要而外时间计算父节点
+//#include <string>
+//#include <string.h>
+//#include <queue>
+//#include <iostream>
+//using namespace std;
+//
+//class Node
+//{
+//public:
+//    char data;
+//    Node* left, * right, * parent;
+//    Node() {}
+//    ~Node()
+//    {
+//        delete left;
+//        delete right;
+//    }
+//};
+//
+//static int i = 0;
+//Node* creattree(string str, Node* plast = NULL)
+//{
+//    Node* p = NULL;
+//    if (str[i] != '0')
+//    {
+//        p = new Node;
+//        p->data = str[i];
+//        i++;
+//        p->left = creattree(str, p);
+//        i++;
+//        p->right = creattree(str, p);
+//        p->parent = plast;
+//    }
+//    return p;
+//}
+//void leaf(Node* tree)
+//{
+//    if (tree->left == NULL && tree->right == NULL)
+//    {
+//        cout << tree->data << " ";
+//    }
+//    if (tree->left)
+//    {
+//        leaf(tree->left);
+//    }
+//    if (tree->right)
+//    {
+//        leaf(tree->right);
+//    }
+//
+//}
+//void parent(Node* tree)
+//{
+//    if (tree->left == NULL && tree->right == NULL)
+//    {
+//        cout << tree->parent->data << " ";
+//    }
+//    if (tree->left)
+//    {
+//        parent(tree->left);
+//    }
+//    if (tree->right)
+//    {
+//        parent(tree->right);
+//    }
+//
+//}
+//int main()
+//{
+//    int T;
+//    string str;
+//    cin >> T;
+//    while (T--)
+//    {
+//        i = 0;
+//        Node* tree = NULL;
+//        cin >> str;
+//        tree = creattree(str, NULL);
+//        leaf(tree);
+//        cout << endl;
+//        parent(tree);
+//        cout << endl;
+//        delete tree;
+//    }
+//    return 0;
+//}
+//

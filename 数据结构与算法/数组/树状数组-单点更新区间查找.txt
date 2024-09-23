@@ -1,0 +1,72 @@
+(1) Add i j,i和j为正整数,表示第i个营地增加j个人（j不超过30）
+(2)Sub i j ,i和j为正整数,表示第i个营地减少j个人（j不超过30）;
+(3)Query i j ,i和j为正整数,i<=j，表示询问第i到第j个营地的总人数;
+(4)End 表示结束，这条命令在每组数据最后出现;
+
+
+///单点更新 区间查询 
+#include <iostream>
+#include <cstdio>
+#include <cstring> 
+#include <string>
+using namespace std;
+const int maxn=5e4+10; 
+int c[maxn];
+int n;
+int lowbit(int x){
+	return x&(-x);
+}
+void update(int x,int val){
+	for(int i=x;i<=n;i+=lowbit(i)){
+		c[i]+=val;
+	}
+}
+int query(int x){
+	int res=0;
+	for(int i=x;i>0;i-=lowbit(i)){
+		res+=c[i];
+	}
+	return res;
+}
+int query_range(int l,int r){
+	return query(r)-query(l-1);
+}
+void init(){
+	memset(c,0,sizeof(c));
+}
+int main()
+{
+	int T;
+	cin>>T;
+	int cas=1;
+	while(T--){
+		scanf("%d",&n);
+		init();
+		int t;
+		for(int i=1;i<=n;i++){
+			scanf("%d",&t);
+			update(i,t);
+		}
+		printf("Case %d:\n",cas++);
+		string order;
+		while(cin>>order){
+			int a,b;
+			if(order[0]=='E')
+				break;
+			if(order[0]=='Q'){
+				scanf("%d%d",&a,&b);
+				cout<<query_range(a,b)<<endl;
+			}
+			else if(order[0]=='A')	{
+				scanf("%d%d",&a,&b);
+				update(a,b);
+			}
+			else if(order[0]=='S'){
+				scanf("%d%d",&a,&b);
+				update(a,-b);
+			}
+		}
+	}
+	return 0;
+	
+}

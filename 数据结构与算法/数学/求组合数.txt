@@ -1,0 +1,86 @@
+int C3(int n, int m)   //正常计算
+{
+    int a = 1, b = 1;
+    for (int i = n; i > n - m; --i) a *= i;
+    for (int i = m; i >= 1; i--) b *= i;
+    return a/b;
+}
+
+
+/*************数学递推公式**********************/
+int C4(int n, int m)  
+
+{
+    if (n == m || m == 0) return 1;
+    return C4(n-1, m) + C4(n-1, m-1);
+}
+
+int C5(int n, int m, map<int, int>& memo)
+{
+    if (n == m || m == 0) return 1;
+
+    auto itora = memo.find((n-1)*10000+m);
+    int a = itora != memo.end() ? itora->second : C4(n-1, m);
+    if (itora == memo.end()) memo[(n-1)*10000+m] = a;
+
+    auto itorb = memo.find((n-1)*10000+m-1);
+    int b = itorb != memo.end() ? itorb->second : C4(n-1, m-1);
+    if (itorb == memo.end()) memo[(n-1)*10000+m-1] = b;
+
+    return a + b;
+}
+
+int C6(int n, int m)
+{
+    if (n == m || m == 0) return 1;
+
+    vector<vector<int>> dp(n+1, vector<int>(m+1));
+    for (int i = 0; i <= n; i++)
+        for (int j = 0; j <= i && j <= m; j++)
+            if (i == j || j == 0) dp[i][j] = 1;
+            else dp[i][j] = dp[i-1][j] + dp[i-1][j-1];
+
+    return dp[n][m];
+}
+
+int C7(int n, int m)
+{
+    if (n == m || m == 0) return 1;
+
+    vector<int> dp(m+1);
+    for (int i = 0; i <= n; i++)
+        for (int j = min(i, m); j >= 0; j--)
+            if (i == j || j == 0) dp[j] = 1;
+            else dp[j] = dp[j] + dp[j-1];
+
+    return dp[m];
+}
+
+优化
+1. m=min(n-m，m)；
+2.从上面的剪枝操作得到启示，其实每一行没必要全部计算出来，以 C(5,3) 为例，我们只需要计算出表格中有数字的位置的结果就可以了
+  这样来看每行最多需要计算3个值，那么时间复杂度可以降低到 O(3n)，去掉常数，时间复杂度降为 O(n)。
+
+/****************************线性递归***********************/
+
+int C8(int n, int m)
+{
+    if (n == m || m == 0) return 1;
+    return C8(n, m-1) * (n-m+1) / m;
+}
+
+int C9(int n, int m)
+{
+    if (n == m || m == 0) return 1;
+
+    int ans = 1;
+    m = min(m, n-m);
+
+    for (int i = 1; i <= m; i++)
+        ans = ans * (n-i+1) / i;
+    return ans;
+}
+
+
+
+

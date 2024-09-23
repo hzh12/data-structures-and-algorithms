@@ -1,0 +1,65 @@
+#include <iostream>
+using namespace std;
+
+void print(int num[], int n)
+{
+	for (int i = 0; i < n; i++)
+		cout << num[i] << " ";
+	cout << endl;
+}
+
+void merge(int num[], int low, int mid ,int high)
+{
+	//i 指向第 1 有序区的第 1 个元素
+	int i = low;
+	//j 指向第 2 有序区的第 1 个元素，high 为第 2 有序区的最后一个元素
+	int j = mid + 1;
+	//temp数组暂存合并的有序序列
+	int *temp = new int[high - low + 1];
+	if (!temp)cout << "erro", exit(0);
+
+	int k = 0;
+	//顺序选取两个有序区的较小元素，存储到t数组中，因为是递增排序
+	while (i <= mid && j <= high)
+	{
+		if (num[i] <= num[j])
+			temp[k++] = num[i++];
+		else
+			temp[k++] = num[j++];
+	}
+
+	//比完之后，假如有序区仍有剩余，则直接全部复制到 temp 数组
+	while (i <= mid)temp[k++] = num[i++];
+	while (j <= high)temp[k++] = num[j++];
+
+	//将排好序的序列，重存回到 list 中 low 到 high 区间
+	for (i = low, k = 0; i <= high; i++, k++)
+		num[i] = temp[k];
+
+	delete[]temp;
+}
+
+void mergeSort(int num[], int low, int high)
+{
+	//二路归并排序，分为二路
+	int mid = (low + high) / 2;
+	if (low < high)
+	{
+		//递归过程，二路归并排序递归过程
+		mergeSort(num, low, mid);
+		mergeSort(num, mid + 1, high);
+		//归并
+		merge(num, low, mid, high);
+	}
+}
+
+int main()
+{
+	int n,num[20]; cin >> n;
+	for (int i = 0; i < n; i++)
+		cin >> num[i];
+
+	mergeSort(num, 0, n - 1);
+	print(num, n);
+	return 0;
+}

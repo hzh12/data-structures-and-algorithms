@@ -1,0 +1,109 @@
+#include <iostream>
+using namespace std;
+
+int n, num[20];
+
+void print(int num[], int n)
+{
+	for (int i = 1; i <= n; i++)
+		cout << num[i] << " ";
+	cout << endl;
+}
+
+int Partition(int num[], int low, int high)
+{
+	int pivot = num[0];                       	                        //固定基准
+	//int pivot = selectpivotrandom（num,low,high）;          //随机基准
+	//int pivot = selectPivotMiddleOfThree（num,low,high）;          //三值取中基准
+
+	while (low < high)
+	{
+		while (low < high&&num[high] >= pivot)
+			--high;
+		num[low] = num[high];
+		while (low < high&&num[low] <= pivot)
+			++low;
+		num[high] = num[low];
+	}
+	num[low] = pivot;
+	return low;
+}
+
+void QSort(int num[], int low, int high)
+{
+	if (low < high)
+	{
+		int pivot = Partition(num, low, high);
+		print(num, n);
+		QSort(num, low, pivot - 1);
+		QSort(num, pivot + 1, high);
+		
+		//int lhigh,rlow;
+		//gather(num,low,high,pivot,lhigh,rlow);
+		//Qsoet(num,low,lhigh);
+		//Qsoet(num,rlow,high);
+	}
+}
+
+void QuickSort(int num[])
+{
+	QSort(num, 1, n);
+}
+
+int main()
+{	
+	cin >> n;
+	for (int i = 1; i <= n; i++)cin >> num[i];
+	QuickSort(num);
+	cout << endl;	
+	return 0;
+}
+
+
+/*****************************/
+改进一：随机基准
+int selectpivotrandom(int arr[],int low,int high)
+{
+ srand(time(0));
+int pivot=rand()%(high-low)+low;
+swap(arr[low],arr[pivor]);
+return arr[low];
+}
+
+改进二：三数取中基准
+int selectPivotMiddleOfThree(int arr[],int low,int high)
+{
+int mid=low+((high-low)>>1);
+if(arr[mid]>arr[high])
+   swap(arr[mid],arr[high];
+if(arr[low]>arr[high])
+   swap(arr[low],arr[high]);
+if(arr[mid]>arr[low])
+  swap(arr[low],arr[mid]);
+
+return arr[low];
+}
+
+改进二：聚集相同数字
+void gather(int arr[],int low,int high,int pivot,int &left,int &right)
+{
+if(low<high)
+{
+	int num=num[pivot],idx=pivot-1;
+	for(int i=idx;i>=low;--i)
+	{
+		if(arr[i]==num)
+		swap(arr[i],arr[idx--]);
+	}
+	left=idx;
+
+	idx=pivot+1;
+	for(int i=idx;i<=high;++i)
+	{
+		if(arr[i]==num)
+		swap(arr[i],arr[idx++]);
+	}
+	right=idx;
+}
+}
+

@@ -1,0 +1,74 @@
+#include<bits/stdc++.h> 
+using namespace std;
+
+int n,m,cnt,tem[20];
+int g[200][200],c[20];
+bool vis[20];
+
+void dfs(int u)
+{
+	vis[u] = 1;
+	tem[cnt++] = u;
+	for (int i = 1; i <= n; ++i)
+		if (!vis[i] && g[i][u])
+			dfs(i);
+}
+
+bool check(int u, int j)
+{
+	for (int i = 1; i <= n; ++i)
+		if (g[u][i] && c[i] == j)
+			return false;
+	return true;
+}
+
+void dfs(int u, int &res)
+{
+	if(u==cnt)
+	{
+		res++; 
+		return;
+	}
+	for (int i = 1; i <= 3; ++i)
+	{
+		if (check(tem[u], i))
+		{
+			c[tem[u]] = i;
+			dfs(u + 1, res);
+			c[tem[u]] = 0;
+		}
+	}
+}
+
+int main()
+{
+	scanf("%d%d", &n, &m);
+	for (int i = 0; i < m; ++i)
+	{
+		int a, b;
+		scanf("%d%d", &a, &b);
+		g[a][b] = g[b][a] = 1;
+	}
+	long long ans = 1;
+	for (int i = 1; i <= n; ++i)
+	{
+		if (!vis[i])
+		{
+			cnt = 0;
+			dfs(i);
+			int t = 0;
+			dfs(0, t);
+			ans = ans * t;
+		}
+	}
+	printf("%lld\n", ans);
+	return 0;
+}
+/**********************************************************************
+	Problem: 1047
+	User: alg21_ac_20183220106
+	Language: C++
+	Result: AC
+	Time:0 ms
+	Memory:2332 kb
+**********************************************************************/

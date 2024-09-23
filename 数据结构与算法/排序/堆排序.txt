@@ -1,0 +1,44 @@
+#include <iostream>
+using namespace std;
+
+int n, num[20];
+
+void print(int num[], int n)
+{
+	for (int i = 0; i <= n; i++)
+		cout << num[i] << " ";
+	cout << endl;
+}
+void HeapAdjust(int num[],int s,int m)
+{
+	for (int j = 2 * s; j <= m; j *= 2)
+	{
+		if (j < m && num[j + 1] < num[j])++j;
+		if (num[s]> num[j])
+			num[s] ^= num[j]^=num[s] ^= num[j],s = j;
+		else break;	
+	}
+}
+
+void HeapSort(int num[], int n)
+{
+	for (int i = n / 2; i > 0; i--)
+		HeapAdjust(num, i, n);
+	print(num, n);
+	for (int i = n; i > 1; --i)
+	{
+		num[1] ^= num[i] ^= num[1] ^= num[i];
+		HeapAdjust(num, 1, i - 1);
+		print(num, n);
+	}
+}
+
+int main()
+{
+	cin >> num[0];
+	for (int i = 1; i <= num[0]; i++)
+		cin >> num[i];
+	HeapSort(num, num[0]);
+	return 0;
+}
+

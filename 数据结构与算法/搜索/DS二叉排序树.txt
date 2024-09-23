@@ -1,0 +1,288 @@
+#include <iostream>
+using namespace std;
+
+class BSTNode {
+public:
+	int data;
+	BSTNode* left, * right;
+public:
+	BSTNode() { left = NULL; right = NULL; }
+	~BSTNode() {}
+};
+
+class BST {
+private:
+	BSTNode* root;
+	void inorder(BSTNode*);
+public:
+	BST() {}
+	~BST() {}
+	void create();
+	void inorder();
+	void insert();
+	int find(int);
+	bool dele(int);
+	BSTNode* findpointer(int);
+	BSTNode* findparent(int);
+};
+
+int BST::find(int num)
+{
+	BSTNode* t_p = root;
+	int times = 0;
+	while (1)
+	{
+		if (t_p == NULL)
+			return -1;
+		times++;
+		if (num == t_p->data)
+			return times;
+		else if (num < t_p->data)
+			t_p = t_p->left;
+		else if (num > t_p->data)
+			t_p = t_p->right;
+	}
+	return times;
+}
+
+BSTNode* BST::findpointer(int num)
+{
+	BSTNode* t_p = root;
+	while (1)
+	{
+		if (t_p == NULL)return NULL;
+		if (num == t_p->data)return t_p;
+		else if (num > t_p->data)t_p = t_p->right;
+		else if (num < t_p->data)t_p = t_p->left;
+	}
+	return NULL;
+}
+BSTNode* BST::findparent(int num)
+{
+	BSTNode* t_p = root;
+	BSTNode* parent = NULL;
+	while (1)
+	{
+		if (t_p == NULL)return NULL;
+		if (num == t_p->data)return parent;
+		else if (num > t_p->data)parent = t_p, t_p = t_p->right;
+		else if (num < t_p->data)parent = t_p, t_p = t_p->left;
+	}
+}
+
+void BST::create()  //减少调用，加快速度，函数内嵌或调用insert()方法
+{
+	int n, t_n; cin >> n;
+	root = new BSTNode();
+	cin >> root->data;
+	BSTNode* t_p;
+	for (int i = 0; i < n - 1; i++)
+	{
+		cin >> t_n;
+		t_p = root;
+		while (1)
+		{
+			if (t_p->data > t_n)
+			{
+				if (t_p->left != NULL)
+					t_p = t_p->left;
+				else
+				{
+					BSTNode* lc = new BSTNode();
+					t_p->left = lc;
+					lc->data = t_n;
+					break;
+				}
+			}
+			else
+			{
+				if (t_p->right != NULL)
+					t_p = t_p->right;
+				else
+				{
+					BSTNode* lc = new BSTNode();
+					t_p->right = lc;
+					lc->data = t_n;
+					break;
+				}
+			}
+		}
+	}
+}
+
+void BST::inorder() { inorder(root); }
+void BST::inorder(BSTNode* t)
+{
+	if (t->left != NULL)
+		inorder(t->left);
+	cout << t->data << " ";
+	if (t->right != NULL)
+		inorder(t->right);
+}
+
+void BST::insert()
+{
+	int t_n; cin >> t_n;
+	BSTNode* t_p; t_p = root;
+	while (1)
+	{
+		if (t_p->data > t_n)
+		{
+			if (t_p->left != NULL)
+				t_p = t_p->left;
+			else
+			{
+				BSTNode* lc = new BSTNode();
+				t_p->left = lc;
+				lc->data = t_n;
+				break;
+			}
+		}
+		else
+		{
+			if (t_p->right != NULL)
+				t_p = t_p->right;
+			else
+			{
+				BSTNode* lc = new BSTNode();
+				t_p->right = lc;
+				lc->data = t_n;
+				break;
+			}
+		}
+	}
+}
+
+bool BST::dele(int num)
+{
+	/*BSTNode* p = findpointer(num);
+	if (!p)return 0;
+
+	BSTNode* s, * q;
+	if (!p->right) {
+		q = p; p = p->left;
+		q = NULL;
+	}
+	else if (!p->left) {
+		q = p, p = p->right; delete q;
+	}
+	else {
+		q = p;
+		s = p->left;
+		while (s->right) {
+			q = s;
+			s = s->right;
+		}
+		p->data = s->data;
+		if (q != p)q->right = s->left;
+		else q->left = s->left;
+		delete s; s = NULL;
+	}*/
+	BSTNode* t = findpointer(num);
+	BSTNode* parent = NULL;
+	if (t != NULL)
+	{
+		parent = findparent(num);
+	}
+	while (true)
+	{
+		if (t == NULL)///t空，没找到，返回0
+		{
+			return 0;
+		}
+		if (t != NULL && parent == NULL)///t不空，parent空，是根
+		{
+			if (t->left == NULL && t->right != NULL)
+			{
+				root = t->right;
+				return 0;
+			}
+			else if (t->right == NULL && t->left != NULL)
+			{
+				root = t->left;
+				return 0;
+			}
+			else if (t->left == NULL && t->right == NULL)
+			{
+				root = NULL;
+				return 0;
+			}
+		}
+		if (num == t->data)
+		{
+			if (t->left == NULL && t->right == NULL)
+			{
+				if (parent->left == t)
+					parent->left = NULL;
+				else if (parent->right == t)
+					parent->right = NULL;
+				delete t;
+				return 1;
+			}
+			else if (t->left == NULL && t->right != NULL)
+			{
+				BSTNode* temp = t->right;
+				if (parent->left == t)
+					parent->left = temp;
+				else if (parent->right == t)
+					parent->right = temp;
+				delete t;
+				return 1;
+			}
+			else if (t->left != NULL && t->right == NULL)
+			{
+				BSTNode* temp = t->left;
+				if (parent->left == t)
+					parent->left = temp;
+				else if (parent->right == t)
+					parent->right = temp;
+				delete t;
+				return 1;
+			}
+			else///左右都不空
+			{
+				BSTNode* S = t->left;
+				BSTNode* Q = t;
+				if (S->right == NULL)
+				{
+					t->data = S->data;
+					t->left = S->left;
+					delete S;
+					return 1;
+				}
+				while (S->right != NULL)
+				{
+					Q = S;
+					S = S->right;
+				}
+				t->data = S->data;
+				Q->right = S->left;
+				delete S;
+				return 1;
+			}
+		}
+		return 0;
+	}
+}
+
+int main()
+{
+	int t; cin >> t;
+	while (t--)
+	{
+		BST t;
+		t.create();
+		t.inorder();
+		cout << endl;
+
+		int m; cin >> m;
+		while (m--)
+		{
+			int t_n; cin >> t_n;
+			t.dele(t_n);
+			t.inorder();
+			cout << endl;
+		}
+	}
+	return 0;
+}

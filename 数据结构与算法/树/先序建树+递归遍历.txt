@@ -1,0 +1,95 @@
+#include <iostream>
+#include<stack>
+#include<queue>
+#include<string.h>
+#include<string>
+using namespace std;
+
+class Node {
+public:
+	char data;
+	Node* left, * right;
+	Node() :left(NULL), right(NULL) {}
+	~Node() { delete left; delete right; }
+};
+
+class tree {
+private:
+	Node* root;
+	int pos;
+	string strtree;
+	Node* createtree() {
+		Node* T;
+		char ch = strtree[pos++];
+
+		if (ch == '0')T = NULL;
+		else {
+			T = new Node();
+			T->data = ch;
+			T->left = createtree();
+			T->right = createtree();
+		}
+		return T;
+	}
+	void preorder(Node* t);
+	void inorder(Node* t);
+	void postorder(Node* t);
+public:
+	int leaf;
+	queue<char> que;
+	void create(string TreeArray) {
+		pos = 0;
+		strtree.assign(TreeArray);
+		root = createtree();
+	}
+	void preorder() { preorder(root); }
+	void inorder() { inorder(root); }
+	void postorder() { postorder(root); }
+};
+
+void tree::preorder(Node* t)
+{
+	if (t)
+	{
+		cout << t->data;
+		preorder(t->left);
+		preorder(t->right);
+	}
+	
+}
+
+void tree::inorder(Node* t)
+{
+	if (t)
+	{
+		inorder(t->left);
+		cout << t->data;
+		inorder(t->right);
+	}
+}
+
+void tree::postorder(Node* t)
+{
+	if (t)
+	{
+		postorder(t->left);
+		postorder(t->right);
+		cout << t->data;
+	}
+}
+
+int main()
+{
+	int t; cin >> t;
+	while (t--)
+	{
+		string str; cin >> str;
+		tree _t;
+
+		_t.create(str);
+		_t.preorder(); cout << endl;
+		_t.inorder(); cout << endl;
+		_t.postorder(); cout << endl;
+	}
+	return 0;
+}

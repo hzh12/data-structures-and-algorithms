@@ -1,0 +1,63 @@
+#include <iostream>
+#include<string>
+#include<stack>
+#include<queue>
+using namespace std;
+
+bool movement[18];
+stack<char> sta;
+queue<char> que;
+string str;
+
+int main()
+{
+	int t; cin >> t;
+	while (t--)
+	{
+		int n; cin >> n;
+		cin >> str;
+
+		char temp;
+		for (int i = 0; i < n; i++)
+		{
+			cin >> temp;
+			que.push(temp);
+		}
+
+		int pos = 0;
+		for (int i = 0; i < n; i++)
+		{
+			sta.push(str[i]);
+			movement[pos++] = 1;
+
+			while (!que.empty()&&!sta.empty())
+			{
+				if (que.front() == sta.top())
+				{
+					que.pop(); sta.pop();
+					movement[pos++] = 0;
+				}
+				else
+					break;
+			}
+
+		}
+
+		if (pos != 2 * n)
+			cout << "No\nFINISH\n";
+		else
+		{
+			cout << "Yes\n";
+			for (int i = 0; i < 2 * n; i++)
+				if (movement[i] == 1)cout << "in\n";
+				else cout << "out\n";
+			cout << "FINISH\n";
+		}
+
+		while (!sta.empty())sta.pop();
+		while (!que.empty())que.pop();
+	}
+	return 0;
+}
+
+//用堆和队列判断一个顺序的入栈，是否有有一个顺序的出栈

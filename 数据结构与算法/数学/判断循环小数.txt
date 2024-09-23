@@ -1,0 +1,89 @@
+#include <iostream>
+#include<string.h>
+
+using namespace std;
+
+bool vis[100005];
+int res[100005];
+
+int main()
+{
+	int t; cin >> t;
+	while (t--)
+	{
+		int n; cin >> n;
+		if (n == 1)
+			cout << "1" << endl;
+		else if (n == -1)
+			cout << "-1" << endl;
+		else {
+			if (n < 0) { cout << "-"; n = -n; }
+			memset(vis, 0, sizeof(vis));
+
+			int k = 1;
+			int cnt = 0;
+			vis[k] = 1;    //1%n=1
+
+			cout << "0.";
+			while (k)
+			{
+				k *= 10;
+				res[cnt++] = k/n;
+				
+				k %= n;
+				if (vis[k] == 1)break;
+				vis[k] = 1;
+			}
+			for (int i = 0; i < cnt; i++)
+				cout << res[i];
+			cout << endl;
+		}
+	}
+	return 0;
+}
+
+int main()  //m除n
+//{
+//	int m, n;
+//	while (cin >> m >> n)
+//	{
+//		if (m > 0 && n < 0)
+//		{
+//			cout << "-";
+//			n = -n;
+//		}
+//		else if (m < 0 && n>0)
+//		{
+//			cout << "-";
+//			m = -m;
+//		}
+//
+//		memset(vis, 0, sizeof(vis));
+//		int k = m % n;
+//		vis[k] = 1;
+//		int cnt = 0;
+//		
+//		if (m%n == 0)cout << m / n;
+//		else cout << m / n << ".";
+//
+//		while(k) {
+//			k *=10;
+//			res[cnt++] = k / n;
+//			
+//			k %= n;
+//			if (vis[k] == 1)break;
+//			vis[k] = 1;
+//		}
+//
+//		for (int i = 0; i < cnt; i++)
+//			cout << res[i];
+//		cout << endl;
+//	}
+//	return 0;
+//}
+
+
+
+
+
+
