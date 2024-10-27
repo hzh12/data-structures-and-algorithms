@@ -1,0 +1,142 @@
+https://www.cnblogs.com/pters/p/container_traversal.html
+C++11之后，标准库引入了大量由基本数据结构封装而成的容器类型。容器的引入，一定程度上降低Cpp的上手难度。
+
+在实际的开发过程中，经常需要根据业务需求，在遍历过程中从容器里删除指定的元素。而一些不规范的使用方式，将埋下稳定性风险。
+
+
+一、推荐模板
+
+对于在遍历过程中删除指定元素，推荐使用以下模板：
+
+
+for(auto it = _container.begin(); it != _container.end(); ) {
+    if(__pred(*it)) {
+        //do something with (*it);
+        it = _container.erase(it);
+    } else {
+        ++it;
+    }
+}
+　　
+
+二、常见遍历模式的缺陷
+
+1. 下面这种遍历方式应该是大家最容易想到的：
+
+for(auto it = _container.begin(); it != _container.end(); ++it) {
+    if(__pred(*it)) {
+        _container.erase(it);
+    }
+}
+这种遍历方式的问题比较明显，主要是两种：
+
+1.间隔遍历，部分元素被跳过；
+2.heap-buffer-used-after-free，也就是使用被释放的动态内存；
+
+
+第一类问题主要出现在以vector为代表的容器中
+
+int main() {
+    std::vector<int> nums{1,2,3,4,5,6,7,8};
+    for(auto iter = nums.begin(); iter != nums.end(); ++iter) {
+        if(*iter == 4) {
+            nums.erase(iter);
+        } else {
+            std::cout<< *iter <<" ";
+        }
+    }
+    std::cout<<std::endl;
+    return 0;
+}
+
+　　g++ _Container.cpp -o _Container && _Container
+      
+
+      可以看到删除元素4之后，其之后的5也被循环跳过了。其原因在于，vector在erase元素时，会将之后的数据往前移动。也就是说，在未++iter之前，iter已经指向下一个元素了。这一点可以从vector的erase实现佐证：
+
+erase(const_iterator __position)
+{ return _M_erase(begin() + (__position - cbegin())); }
+ 
+template<typename _Tp, typename _Alloc>
+    typename vector<_Tp, _Alloc>::iterator
+    vector<_Tp, _Alloc>::
+    _M_erase(iterator __position)
+    {
+      if (__position + 1 != end())
+    _GLIBCXX_MOVE3(__position + 1, end(), __position);
+      --this->_M_impl._M_finish;
+      _Alloc_traits::destroy(this->_M_impl, this->_M_impl._M_finish);
+      _GLIBCXX_ASAN_ANNOTATE_SHRINK(1);
+      return __position;
+    }
+　　_GLIBCXX_MOVE3 将当前iter之后的元素向前挪动了一个元素。
+
+ 
+
+第二类问题主要出现在以list、map为代表的容器中
+复制代码
+int main() {
+    std::unordered_map<int, int> nums{{1,2}, {2,3}, {3,4}};
+    for(auto iter = nums.begin(); iter != nums.end(); ++iter) {
+        if(iter->first == 2) {
+            nums.erase(iter);
+        }
+    }
+    return 0;
+}
+
+复制代码
+g++ _Container.cpp -o _Container && _Container
+
+
+
+ 程序崩溃后报 heap-use-after-free错误，并输出崩溃时的调用栈。我们试着从stl的源码寻找错误的原因。
+
+template<typename _Key, typename _Value,
+       typename _Alloc, typename _ExtractKey, typename _Equal,
+       typename _H1, typename _H2, typename _Hash, typename _RehashPolicy,
+       typename _Traits>
+    auto
+    _Hashtable<_Key, _Value, _Alloc, _ExtractKey, _Equal,
+           _H1, _H2, _Hash, _RehashPolicy, _Traits>::
+    erase(const_iterator __it)
+    -> iterator
+    {
+      __node_type* __n = __it._M_cur;
+      std::size_t __bkt = _M_bucket_index(__n);
+ 
+      // Look for previous node to unlink it from the erased one, this
+      // is why we need buckets to contain the before begin to make
+      // this search fast.
+      __node_base* __prev_n = _M_get_previous_node(__bkt, __n);
+      return _M_erase(__bkt, __prev_n, __n);
+    }
+ 
+template<typename _Key, typename _Value,
+       typename _Alloc, typename _ExtractKey, typename _Equal,
+       typename _H1, typename _H2, typename _Hash, typename _RehashPolicy,
+       typename _Traits>
+    auto
+    _Hashtable<_Key, _Value, _Alloc, _ExtractKey, _Equal,
+           _H1, _H2, _Hash, _RehashPolicy, _Traits>::
+    _M_erase(size_type __bkt, __node_base* __prev_n, __node_type* __n)
+    -> iterator
+    {
+      if (__prev_n == _M_buckets[__bkt])
+    _M_remove_bucket_begin(__bkt, __n->_M_next(),
+       __n->_M_nxt ? _M_bucket_index(__n->_M_next()) : 0);
+      else if (__n->_M_nxt)
+    {
+      size_type __next_bkt = _M_bucket_index(__n->_M_next());
+      if (__next_bkt != __bkt)
+        _M_buckets[__next_bkt] = __prev_n;
+    }
+ 
+      __prev_n->_M_nxt = __n->_M_nxt;
+      iterator __result(__n->_M_next());
+      this->_M_deallocate_node(__n);
+      --_M_element_count;
+ 
+      return __result;
+    }
+　　实现上，根据迭代器找到指定的元素后，不仅将元素从容器中删除，同时释放了存储该元素的动态内存。此时++iter引用了已被释放的内存，引发heap-use-after-free错误。

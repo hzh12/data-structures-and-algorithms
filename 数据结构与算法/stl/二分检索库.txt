@@ -1,0 +1,67 @@
+https://blog.csdn.net/weixin_45031801/article/details/137544229
+lower_bound 返回指向第一个值不小于 val 的位置，也就是返回第一个大于等于val值的位置。
+lower_bound(v.begin(),v.end(),val,cmp);
+
+cmp,返回 第一个 false 的元素,val 是自定义函数中的 第二个参数
+//  找到第 1 个 无法 被 5 整除 的元素
+bool cmp(const int& e, const int& val)
+{
+	return (e % val) == 0;
+}
+
+//适用于从小到大排序的有序序列，从数组/容器的 beign 位置起，到 end-1 位置结束，查找第一个 大于等于 val 的数字
+lower_bound(v.begin(),v.end(),val,less<type>());
+//适用于从大到小排序的有序序列，从数组/容器的 beign 位置起，到 end-1 位置结束，查找第一个 小于等于 val 的数字
+lower_bound(v.begin(),v.end(),val,greater<type>());
+
+//原型
+int lower_bound(vector<int>& nums, int x) 
+{
+	int left = 0;
+	int right = nums.size() - 1;
+    // 区间为 左闭右闭
+	while (left <= right) {
+		int mid = left +(right - left) / 2;
+		if (x > nums[mid]) {
+			left = mid + 1;
+		}
+		else {
+			right = mid - 1;	
+		}
+	}
+	return left;
+}
+
+
+###############################################################
+upper_bound 返回第一个大于--val值的位置。
+upper_bound(v.begin(),v.end(),val,cmp);
+
+cmp,返回 第一个 true 的元素  val 是自定义函数中的 第一个参数
+//找到第一个能被 5 整除 的元素
+bool cmp2(const int& val, const int& e)
+{
+	return (e % val) == 0;
+}
+
+//适用于从小到大排序的有序序列，从数组/容器的 beign 位置起，到 end-1 位置结束，查找第一个 大于 val 的数字
+upper_bound(v.begin(),v.end(),val,less<type>());
+//适用于从大到小排序的有序序列，从数组/容器的 beign 位置起，到 end-1 位置结束，查找第一个 小于 val 的数字
+upper_bound(v.begin(),v.end(),val,greater<type>());
+
+//原型
+int upper_bound(vector<int>& nums, int x) {
+	int left = 0;
+	int right = nums.size() - 1;
+ 
+	while (left <= right) {
+		int mid = left +(right - left) / 2;
+		if (x >= nums[mid]) {       //这里是大于等于
+			left = mid + 1;
+		}
+		else {
+			right = mid - 1;	
+		}
+	}
+	return left;
+}

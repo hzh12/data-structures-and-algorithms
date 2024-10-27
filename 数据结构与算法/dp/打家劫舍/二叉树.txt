@@ -37,3 +37,27 @@ int[] dp(TreeNode root) {
 
     return new int[]{not_rob, rob};
 }
+
+https://leetcode.cn/problems/house-robber-iii
+class Solution {
+public:
+    unordered_map<TreeNode*, int> mp;
+    int dfs(TreeNode* root) {
+        if (!root)
+            return 0;
+        if (mp.count(root))
+            return mp[root];
+        int do_it = root->val +
+                    (root->left == NULL
+                         ? 0
+                         : dfs(root->left->left) + dfs(root->left->right)) +
+                    (root->right == NULL
+                         ? 0
+                         : dfs(root->right->left) + dfs(root->right->right));
+        int undo = dfs(root->left) + dfs(root->right);
+        int res = max(do_it, undo);
+        mp[root] = res;
+        return res;
+    }
+    int rob(TreeNode* root) { return dfs(root); }
+};

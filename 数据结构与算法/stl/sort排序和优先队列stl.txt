@@ -51,3 +51,21 @@ int main()
 		printf("%d %.2lf\n",person[i].id,person[i].value*1.0/100);
 	}
 }
+
+
+sort(begin,end,cmp); //默认从小到大
+sort(begin,end,less<int/float/...>()); //从小到大
+sort(begin,end,greater<int/float/...>()); //从大到小
+
+priority_queuuee<int> q; //大根堆
+priority_queuuee<int，vector<int>, less<int> > q; //大根堆
+priority_queuuee<int，vector<int>, greater<int> > q; //小根堆
+
+struct node{char data; int weight;}
+struct cmp{
+	bool operator() (const node &a, const node &b){
+		if(a.data!=b.data)return a.data>b.data;
+		if(a.weight!=b.weight)return a.weight>b.weight;
+
+	}
+}
