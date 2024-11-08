@@ -1,0 +1,7 @@
+https://blog.csdn.net/weixin_54344261/article/details/118904087
+C++中的输入大致有6种方法：cin，cin.get(),cin.getline(),gets(),getchar()
+
+主要使用
+string s;
+getline(cin,s);
+cout << s;
