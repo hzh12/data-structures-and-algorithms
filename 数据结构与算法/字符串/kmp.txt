@@ -19,7 +19,7 @@ int KMP(char *s,char *p)
 		}
 	}
 	if(j==lenp)
-	return 1;//匹配成功 
+	return 1;//匹配成功 //i-j
 	else
 	return 0; 
 }
@@ -38,14 +38,19 @@ void getnext(char *p)
 			j++;//j+1在这
 			k++;//k=k+1
 			//---->若p[k]=p[j]，则next[j+1]=next[j]+1; 
-			//下一个位置的next 
-			if(p[j]!=p[k])//当p[k]！=p[j]时，与主串不匹配时可以返回到这
+
 			{
-				nextt[j]=k;
+				//下一个位置的next 
+				if(p[j]!=p[k])//当p[k]！=p[j]时，与主串不匹配时可以返回到这
+				{
+					nextt[j]=k;
+				}
+				else//当p[j]=p[k]时与主串匹配时你在j位置不匹配匹配串返回这里当前
+		    		//还是 不能与主串匹配，然后还是要返回next[]即next[next[k]] 
+		    		nextt[j]=nextt[k];//优化了 
 			}
-			else//当p[j]=p[k]时与主串匹配时你在j位置不匹配匹配串返回这里当前
-		    	//还是 不能与主串匹配，然后还是要返回next[]即next[next[k]] 
-		    	nextt[j]=nextt[k];//优化了 
+
+			nextt[j] = k;//简单版
 		}
 		else
 		{

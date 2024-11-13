@@ -1,0 +1,40 @@
+next_permutation(nums.begin(),nums.end());
+全排列
+https://blog.csdn.net/KYJL888/article/details/85069557
+
+ void backtrack(vector<vector<int>>& res, vector<int>& output, int left, int right){
+        // 所有数都填完了
+        if (left == right) {
+            res.emplace_back(output);
+            return;
+        }
+        for (int i = left; i < right; ++i) {
+            // 动态维护数组
+            swap(output[i], output[left]);
+            // 继续递归填下一个数
+            backtrack(res, output, left + 1, right);
+            // 撤销操作
+            swap(output[i], output[left]);
+        }
+    }
+    vector<vector<int>> permute(vector<int>& nums) {
+        vector<vector<int> > res;
+        backtrack(res, nums, 0, (int)nums.size());
+        return res;
+    }
+
+    //下一个排列
+    void nextPermutation(vector<int>& nums) {
+        int i = nums.size() - 2;
+        while (i >= 0 && nums[i] >= nums[i + 1]) {
+            i--;
+        }
+        if (i >= 0) {
+            int j = nums.size() - 1;
+            while (j >= 0 && nums[i] >= nums[j]) {
+                j--;
+            }
+            swap(nums[i], nums[j]);
+        }
+        reverse(nums.begin() + i + 1, nums.end());
+    }

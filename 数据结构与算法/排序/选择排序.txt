@@ -14,10 +14,10 @@ void SelectSort(int num[], int n)
 {
 	for (int i = 1; i < n; i++)
 	{
-		int min = i;
+		int pos=i;
 		for (int j = i + 1; j <= n; j++)
 		{
-			if (num[j] < num[min]) min = j;
+			if (num[j] < num[pos]) pos = j;
 		}
 		if (pos != i)
 			num[i] ^= num[pos] ^= num[i] ^= num[pos];

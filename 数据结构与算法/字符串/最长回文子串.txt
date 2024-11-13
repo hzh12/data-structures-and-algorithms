@@ -50,6 +50,60 @@ string dp(string str)  //时间复杂度=n^2
 		}
 	}
 
+		//快速赋值
+	 { f.assign(n, vector<int>(n, true));
+
+        for (int i = n - 1; i >= 0; --i) {
+            for (int j = i + 1; j < n; ++j) {
+                f[i][j] = (s[i] == s[j]) && f[i + 1][j - 1];
+            }
+        }
+
+作者：力扣官方题解
+链接：https://leetcode.cn/problems/palindrome-partitioning/solutions/639633/fen-ge-hui-wen-chuan-by-leetcode-solutio-6jkv/
+来源：力扣（LeetCode）
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。}
+
+次数统计：https://zhuanlan.zhihu.com/p/364412996
+class Solution {
+public:
+    int countSubstrings(string s) {
+        vector<vector<bool>> dp(s.size(), vector<bool>(s.size(), false));
+        int result = 0;
+        for (int i = s.size() - 1; i >= 0; i--) {
+            for (int j = i; j < s.size(); j++) {
+                if (s[i] == s[j] && (j - i <= 1 || dp[i + 1][j - 1])) {
+                    result++;
+                    dp[i][j] = true;
+                }
+            }
+        }
+        return result;
+    }
+};
+class Solution {
+public:
+    int countSubstrings(string s) {
+        int result = 0;
+        for (int i = 0; i < s.size(); i++) {
+            result += extend(s, i, i, s.size()); // 以i为中心 
+            result += extend(s, i, i + 1, s.size()); // 以i和i+1为中心
+        }
+        return result;
+    }
+    int extend(const string& s, int i, int j, int n) {
+        int res = 0;
+        while (i >= 0 && j < n && s[i] == s[j]) {
+            i--;
+            j++;
+            res++;
+        }
+        return res;
+    }
+};
+
+
+
 	if (maxlen > 0)return str.substr(pos, pos + maxlen);
 	return"erro";
 }

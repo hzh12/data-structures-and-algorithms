@@ -35,3 +35,47 @@ int main()
 	}
 	return 0;
 }
+
+51. N 皇后
+class Solution {
+public:
+    int count, N;
+    vector<vector<string>> res;
+     vector<string> generateBoard(vector<int> &queens, int n) {
+        auto board = vector<string>();
+        for (int i = 0; i < n; i++) {
+            string row = string(n, '.');
+            row[queens[i]] = 'Q';
+            board.push_back(row);
+        }
+        return board;
+    }
+
+    void queen(vector<int> pos, int r) {
+        if (r == N) {
+            res.push_back(generateBoard(pos, N));
+            count++;
+        } else {
+            for (int c = 0; c < N; c++) {
+                pos[r] = c;
+                bool can = true;
+                for (int c1 = 0; c1 < r; c1++) {
+                    if (pos[r] == pos[c1] ||
+                        abs(r - c1) == abs(pos[r] - pos[c1])) {
+                        can = false;
+                        break;
+                    }
+                }
+                if (can)
+                    queen(pos, r + 1);
+            }
+        }
+    }
+
+    vector<vector<string>> solveNQueens(int n) {
+        N = n;
+        vector<int> pos(n);
+        queen(pos, 0);
+        return res;
+    }
+};

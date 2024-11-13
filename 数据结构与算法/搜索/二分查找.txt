@@ -12,7 +12,7 @@ int searchLeft(vector<int>& nums, int target) {   //查找第一个大于等于t
     }
 
 
-核心理解，循环出口，left>right,记住第一种类型即可
+核心理解，循环出口，left>right,记住第一种类型即可，第一个用left 返回，最后一个用right 返回
 ###########################
 第一个大于等于/小于  	第一个大于/小于等于
 nums[middle] < target       	nums[middle] <= target
@@ -40,6 +40,9 @@ return (right >= 0) ? right : -1
 
 https://blog.csdn.net/qq_29611345/article/details/103080287
 寻找左侧边界的二分搜索
+4、另一种写法，帮助你理解二分查找
+算法：查找第一个大于 target 值的坐标。
+注意：1、修改了循环条件：left < right，所以结束是 left == right。2、当遇到大于 target 值时，right = mid，保留当前可能的坐标。
 int left_bound(int[] nums, int target) {
     if (nums.length == 0) return -1;
     int left = 0;
