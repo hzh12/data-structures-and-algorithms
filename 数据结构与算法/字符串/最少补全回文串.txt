@@ -37,3 +37,5 @@ int main(void) {
     puts(ret);
     return 0;
 }
+
+https://leetcode.cn/problems/minimum-insertion-steps-to-make-a-string-palindrome/description/

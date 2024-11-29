@@ -1,0 +1,14 @@
+   stoi()，
+将 n 进制的字符串转化为十进制
+stoi（字符串，起始位置，n进制（默认10进制）），将 n 进制的字符串转化为十进制 
+string str = "100";
+	int x = stoi(str, 0, 2); //将二进制"100"转化为十进制x
+	cout << x << endl;
+
+
+to_string 
+将整数转换为字符串
+功能：将数字常量（int,double,long等）转换为字符串（string），返回转换好的字符串
+int num = 123456789;
+	string s = to_string(num); // "123456789"
+	cout << s << endl;

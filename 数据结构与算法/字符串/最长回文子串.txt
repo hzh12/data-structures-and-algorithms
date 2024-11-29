@@ -21,36 +21,36 @@ string baoli(string str)   //时间复杂度=n^3
 	return "erro";
 }
 
-string dp(string str)  //时间复杂度=n^2
-{
-	int len = str.length();
-	int maxlen=0, pos=0;
+class Solution {
+public:
+    string longestPalindrome(string str) {//时间复杂度=n^2
+        int len = str.length();
+        int maxlen = 1, pos = 0;
 
-	vector<vector<bool> >dp(len, vector<bool>(len));
-	for (int i = 0; i < len; i++)
-	{ 
-		dp[i][i] = true;
-		if (i < len - 1 && str[i] == str[i + 1])
-		{
-			dp[i][i + 1] = true;
-			pos = i; maxlen = 2;
-		}
-	}
+        vector<vector<bool>> dp(len, vector<bool>(len));
+        for (int i = 0; i < len; i++) {
+            dp[i][i] = true;
+            if (i < len - 1 && str[i] == str[i + 1]) {
+                dp[i][i + 1] = true;
+                pos = i;
+                maxlen = 2;
+            }
+        }
 
-	for (int strlen = 3; strlen <= len; ++strlen)
-	{
-		for (int i = 0; i+strlen-1<len; i++)
-		{
-			int j = i + strlen - 1;
-			if (dp[i + 1][j - 1] && str[i]==str[j])
-			{
-				dp[i][j] = true;
-				maxlen = strlen; pos = i;
-			}
-		}
-	}
-
-		//快速赋值
+        for (int strlen = 3; strlen <= len; ++strlen) {
+            for (int i = 0; i + strlen - 1 < len; i++) {
+                int j = i + strlen - 1;
+                if (dp[i + 1][j - 1] && str[i] == str[j]) {
+                    dp[i][j] = true;
+                    maxlen = strlen;
+                    pos = i;
+                }
+            }
+        }
+        return str.substr(pos, maxlen); // 获取最长回文子串
+    }
+};
+		//快速赋值是否为回文子串
 	 { f.assign(n, vector<int>(n, true));
 
         for (int i = n - 1; i >= 0; --i) {
@@ -61,8 +61,7 @@ string dp(string str)  //时间复杂度=n^2
 
 作者：力扣官方题解
 链接：https://leetcode.cn/problems/palindrome-partitioning/solutions/639633/fen-ge-hui-wen-chuan-by-leetcode-solutio-6jkv/
-来源：力扣（LeetCode）
-著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。}
+
 
 次数统计：https://zhuanlan.zhihu.com/p/364412996
 class Solution {

@@ -60,6 +60,7 @@ sort(begin,end,greater<int/float/...>()); //从大到小
 priority_queuuee<int> q; //大根堆
 priority_queuuee<int，vector<int>, less<int> > q; //大根堆
 priority_queuuee<int，vector<int>, greater<int> > q; //小根堆
+priority_queuuee<int，vector<int>, cmp > q; //自定义
 
 struct node{char data; int weight;}
 struct cmp{
@@ -69,7 +70,12 @@ struct cmp{
 
 	}
 }
-
+class cmp {
+    public:
+        bool operator()(pair<int, int> x, pair<int, int> y) {
+            return x.second > y.second;
+        }
+    };
 
 优先队列自定义：https://blog.csdn.net/qq_40691051/article/details/102874220
 struct Node2 
@@ -83,7 +89,7 @@ struct Node2
 	}
 	friend bool operator < (const Node2 &a,const Node2 &b)
 	{
-		return a.weight < b.weight; 		
+		return a.weight < b.weig·ht; 		
 	} //大的优先
 };
 
