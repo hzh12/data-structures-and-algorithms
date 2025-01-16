@@ -57,10 +57,11 @@ sort(begin,end,cmp); //默认从小到大
 sort(begin,end,less<int/float/...>()); //从小到大
 sort(begin,end,greater<int/float/...>()); //从大到小
 
-priority_queuuee<int> q; //大根堆
-priority_queuuee<int，vector<int>, less<int> > q; //大根堆
-priority_queuuee<int，vector<int>, greater<int> > q; //小根堆
-priority_queuuee<int，vector<int>, cmp > q; //自定义
+priority_queue<int> q; //大根堆
+priority_queue<int，vector<int>, less<int> > q; //大根堆
+priority_queue<int，vector<int>, greater<int> > q; //小根堆
+priority_queue<int，vector<int>, cmp > q; //自定义
+priority_queue<T，vector<T>, cmp > q; //自定义
 
 struct node{char data; int weight;}
 struct cmp{
